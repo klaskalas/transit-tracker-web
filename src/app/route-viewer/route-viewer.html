@@ -1,1 +1,19 @@
-<p>route-viewer works!</p>
+<div class="mapbox-container">
+  <mgl-map
+    [ngStyle]="{ 'height': '500px' }"
+    [style]="'mapbox://styles/klaskalas/cmcxtxymc040a01sd3m6w4jas'"
+    [zoom]="[12]"
+    [center]="[18.06, 59.33]"
+    (mapCreate)="onMapCreate($event)"
+  >
+    <mgl-geojson-source id="route" [data]="geoJson">
+      <mgl-layer
+        id="route-line"
+        type="line"
+        [paint]="routePaint"
+        source="route"
+      ></mgl-layer>
+    </mgl-geojson-source>
+  </mgl-map>
+
+</div>

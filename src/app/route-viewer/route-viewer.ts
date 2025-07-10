@@ -1,22 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteService } from '../route-service';
 import { ActivatedRoute } from '@angular/router';
-import {RouteMapComponent} from '../route-map/route-map';
+import {GeoJSONSourceComponent, LayerComponent, MapComponent} from 'ngx-mapbox-gl';
+import mapboxgl from 'mapbox-gl';
 
 @Component({
   selector: 'app-route-viewer',
   standalone: true,
-  imports: [CommonModule, RouteMapComponent],
-  template: `
-    <ng-container *ngIf="geoJsonShape">
-      <app-route-map [geoJsonShape]="geoJsonShape"></app-route-map>
-    </ng-container>
-  `,
+  imports: [CommonModule, GeoJSONSourceComponent, LayerComponent, MapComponent, LayerComponent],
+  templateUrl: './route-viewer.html',
   providers: [RouteService]
 })
 export class RouteViewerComponent implements OnInit {
-  geoJsonShape: any;
+  geoJson: any;
 
   constructor(
     private routeService: RouteService,
@@ -24,9 +21,41 @@ export class RouteViewerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+  }
+
+  readonly routePaint: mapboxgl.LinePaint = {
+    'line-color': '#007cbf',
+    'line-width': 4
+  };
+
+  onMapCreate(map: mapboxgl.Map) {
     const shapeId = this.route.snapshot.paramMap.get('shapeId')!;
     this.routeService.getRouteByShapeId(shapeId).subscribe(route => {
-      this.geoJsonShape = route.geoJsonShape;
+      const geometry = JSON.parse(route);
+
+      this.geoJson = {
+        type: "FeatureCollection",
+        features: [{
+          type: "Feature",
+          geometry: geometry,
+          properties: {
+            name: "Example Line",
+            description: "This is a sample LineString"
+          }
+        }]
+      };
+
+      const coords = geometry.coordinates;
+      if (!coords?.length) return;
+
+      const bounds = coords.reduce(
+        (b: mapboxgl.LngLatBounds, coord: number[]) =>
+          b.extend(coord as [number, number]),
+        new mapboxgl.LngLatBounds(coords[0], coords[0])
+      );
+
+      map.fitBounds(bounds, { padding: 40 });
     });
   }
 }

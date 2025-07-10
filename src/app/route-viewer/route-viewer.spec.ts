@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouteViewerComponent } from './route-viewer';
 
-import { RouteViewer } from './route-viewer';
-
-describe('RouteViewer', () => {
-  let component: RouteViewer;
-  let fixture: ComponentFixture<RouteViewer>;
+describe('RouteViewerComponent', () => {
+  let component: RouteViewerComponent;
+  let fixture: ComponentFixture<RouteViewerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouteViewer]
+      imports: [RouteViewerComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RouteViewer);
+    fixture = TestBed.createComponent(RouteViewerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
