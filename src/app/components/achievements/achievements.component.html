@@ -1,0 +1,44 @@
+<div class="achievements-container">
+  <div class="achievements-header">
+    <h2>Achievements</h2>
+    <p>Unlock badges by completing transit challenges</p>
+  </div>
+
+  @if (achievementsSignal() !== null) {
+    @if (unlockedAchievements().length > 0) {
+      <div class="achievements-section">
+        <h3 class="section-title unlocked">
+          <i class="pi pi-trophy"></i>
+          Unlocked Achievements
+        </h3>
+        <div class="achievements-grid">
+          @for (achievement of unlockedAchievements(); track achievement.id) {
+            <app-achievement-card [achievement]="achievement" />
+          }
+        </div>
+      </div>
+    }
+
+    @if (lockedAchievements().length > 0) {
+      <div class="achievements-section">
+        <h3 class="section-title locked">
+          <i class="pi pi-award"></i>
+          In Progress
+        </h3>
+        <div class="achievements-grid">
+          @for (achievement of lockedAchievements(); track achievement.id) {
+            <app-achievement-card [achievement]="achievement" />
+          }
+        </div>
+      </div>
+    }
+
+    @if (achievementsSignal()?.length === 0) {
+      <div class="empty-state">
+        <i class="pi pi-trophy empty-icon" style="font-size: 64px;"></i>
+        <h3>No Achievements Yet</h3>
+        <p>Start completing transit lines to unlock your first achievement!</p>
+      </div>
+    }
+  }
+</div>

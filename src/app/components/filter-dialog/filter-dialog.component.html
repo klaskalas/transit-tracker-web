@@ -1,0 +1,49 @@
+<div class="filter-dialog">
+
+  <div class="filter-section">
+    <h3><i class="pi pi-directions"></i> Transport Type</h3>
+    <div class="filter-options">
+      @for (type of transitTypes; track type.value) {
+        <p-checkbox
+          [ngModel]="isTypeSelected(type.value)"
+          (onChange)="onTypeChange(type.value, $event.checked)">
+          {{ type.label }}
+        </p-checkbox>
+      }
+    </div>
+  </div>
+
+  <p-divider />
+
+  <div class="filter-section">
+    <h3><i class="pi pi-globe"></i> Region</h3>
+    <div class="filter-options">
+      @for (region of regions; track region) {
+        <p-checkbox
+          [ngModel]="isRegionSelected(region)"
+          (onChange)="onRegionChange(region, $event.checked)">
+          {{ region }}
+        </p-checkbox>
+      }
+    </div>
+  </div>
+
+  <p-divider />
+
+  <div class="filter-section">
+    <h3><i class="pi pi-check-square"></i> Completion Status</h3>
+    <div class="completion-select">
+      <p-select [(ngModel)]="filters.completionStatus"
+                [options]="completionOptions"
+                optionLabel="label"
+                variant="outlined" />
+    </div>
+  </div>
+
+  <div class="filter-actions">
+    <button pButton (click)="cancel()">Cancel</button>
+    <button pButton (click)="clearFilters()">Clear All</button>
+    <button pButton raised severity="primary" (click)="applyFilters()">Apply Filters</button>
+  </div>
+
+</div>

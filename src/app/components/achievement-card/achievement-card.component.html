@@ -1,0 +1,35 @@
+<p-card class="achievement-card" [class.unlocked]="achievement.unlocked">
+  <div class="achievement-header">
+    <div class="achievement-icon" [class.unlocked]="achievement.unlocked">
+      <i class="pi" [ngClass]="'pi-' + achievement.icon" style="font-size: 2rem;"></i>
+    </div>
+    <div class="achievement-info">
+      <h3 class="achievement-title">{{ achievement.title }}</h3>
+      <p class="achievement-description">{{ achievement.description }}</p>
+    </div>
+
+    @if (achievement.unlocked) {
+      <div class="achievement-points">
+        <span class="points-value">{{ achievement.points }}</span>
+        <span class="points-label">pts</span>
+      </div>
+    }
+  </div>
+
+  @if (!achievement.unlocked) {
+    <div class="achievement-progress">
+      <div class="progress-info">
+        <span class="progress-text">{{ achievement.progress }}/{{ achievement.requirement }}</span>
+        <span class="progress-percentage">{{ getProgressPercentage() | number:'1.0-0' }}%</span>
+      </div>
+      <p-progress-bar [value]="getProgressPercentage()" class="progress-bar" />
+    </div>
+  }
+
+  @if (achievement.unlocked && achievement.unlockedDate) {
+    <div class="achievement-unlocked">
+      <i class="pi pi-calendar" style="font-size: 1rem;"></i>
+      <span>Unlocked {{ formatDate(achievement.unlockedDate) }}</span>
+    </div>
+  }
+</p-card>

@@ -1,0 +1,51 @@
+.filter-dialog {
+  min-width: 320px;
+
+  h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-weight: 600;
+  }
+
+  .filter-section {
+    margin: 20px 0;
+
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      mat-checkbox {
+        ::ng-deep .mat-mdc-checkbox-label {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .completion-select {
+      width: 100%;
+    }
+  }
+
+  mat-divider {
+    margin: 20px 0;
+  }
+
+  mat-dialog-actions {
+    padding: 16px 0 0 0;
+    margin: 0;
+
+    button {
+      margin-left: 8px;
+      text-transform: none;
+      font-weight: 500;
+    }
+  }
+}

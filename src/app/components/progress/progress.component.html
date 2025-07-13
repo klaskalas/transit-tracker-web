@@ -1,0 +1,96 @@
+<div class="progress-container">
+  <div class="progress-header">
+    <h2>Your Progress</h2>
+  </div>
+
+  @if (userStatsSignal()) {
+    <div class="stats-grid">
+      <p-card class="stat-card overall">
+        <div class="stat-header">
+          <i class="pi pi-chart-line stat-icon"></i>
+          <h3>Overall Progress</h3>
+        </div>
+        <div class="stat-value">
+          {{ userStatsSignal().completedLines }}/{{ userStatsSignal().totalLines }}
+        </div>
+        <p-progress-bar
+          mode="determinate"
+          [value]="getCompletionPercentage(userStatsSignal().completedLines, userStatsSignal().totalLines)"
+          class="progress-bar">
+        </p-progress-bar>
+        <div class="stat-details">
+          <span>
+            {{
+              getCompletionPercentage(userStatsSignal().completedLines, userStatsSignal().totalLines)
+                | number: '1.0-0'
+            }}% Complete
+          </span>
+        </div>
+      </p-card>
+
+      <p-card class="stat-card points">
+        <div class="stat-header">
+          <i class="pi pi-star stat-icon"></i>
+          <h3>Total Points</h3>
+        </div>
+        <div class="stat-value">{{ userStatsSignal().totalPoints | number }}</div>
+        <div class="stat-details">
+          <span>Level {{ userStatsSignal().level }}</span>
+        </div>
+      </p-card>
+
+      <p-card class="stat-card streak">
+        <div class="stat-header">
+          <i class="pi pi-calendar stat-icon"></i>
+          <h3>Current Streak</h3>
+        </div>
+        <div class="stat-value">{{ userStatsSignal().streakDays }}</div>
+        <div class="stat-details">
+          <span>Days</span>
+        </div>
+      </p-card>
+    </div>
+  }
+
+  @if (transitLinesSignal()) {
+    <div class="detailed-stats">
+      <p-card header="Progress by Type" class="stats-section">
+        <div class="type-stats">
+          @for (stat of getTypeStats(transitLinesSignal()); track stat.type) {
+            <div class="type-stat">
+              <div class="type-header">
+                <i class="pi" [ngClass]="stat.type === 'bus' ? 'pi-bus' : 'pi-train'"></i>
+                <span class="type-name">{{ stat.type | titlecase }}</span>
+                <span class="type-count">{{ stat.completed }}/{{ stat.total }}</span>
+              </div>
+              <p-progress-bar
+                mode="determinate"
+                [value]="stat.percentage"
+                class="type-progress">
+              </p-progress-bar>
+            </div>
+          }
+        </div>
+      </p-card>
+
+      <p-card header="Progress by Region" class="stats-section">
+        <div class="region-stats">
+          @for (stat of getRegionStats(transitLinesSignal()); track stat.region) {
+            <div class="region-stat">
+              <div class="region-header">
+                <i class="pi pi-map-marker"></i>
+                <span class="region-name">{{ stat.region }}</span>
+                <span class="region-count">{{ stat.completed }}/{{ stat.total }}</span>
+              </div>
+              <p-progress-bar
+                mode="determinate"
+                [value]="stat.percentage"
+                class="region-progress">
+              </p-progress-bar>
+            </div>
+          }
+        </div>
+      </p-card>
+    </div>
+  }
+</div>

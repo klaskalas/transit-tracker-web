@@ -1,0 +1,79 @@
+.transit-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  &.completed {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+    border-left: 4px solid #4caf50;
+  }
+
+  .line-indicator {
+    width: 4px;
+    height: 40px;
+    border-radius: 2px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .card-actions {
+    margin-left: auto;
+
+    .type-icon {
+      color: #666;
+    }
+  }
+
+  .line-details {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #666;
+    }
+  }
+
+  .stops-preview {
+    margin-bottom: 12px;
+    font-size: 14px;
+
+    .stops-label {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .stops-text {
+      color: #666;
+      margin-left: 8px;
+    }
+  }
+
+  .completion-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #4caf50;
+    font-weight: 500;
+  }
+
+  .completion-button {
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 500;
+    text-transform: none;
+  }
+}

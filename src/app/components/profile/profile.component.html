@@ -1,0 +1,85 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="avatar">
+      <i class="pi pi-user" style="font-size: 48px;"></i>
+    </div>
+    <h2>Transit Explorer</h2>
+    <p>Level {{ userStatsSignal()?.level || 1 }} Adventurer</p>
+  </div>
+
+  @if (userStatsSignal()) {
+    <div class="profile-stats">
+      <p-card header="Your Journey" class="stats-overview">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">{{ userStatsSignal().completedLines }}</div>
+            <div class="stat-label">Lines Completed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{ userStatsSignal().totalPoints | number }}</div>
+            <div class="stat-label">Total Points</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{ getUnlockedAchievementsCount(userStatsSignal()) }}</div>
+            <div class="stat-label">Achievements</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">{{ userStatsSignal().streakDays }}</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card header="Favorite Region" class="favorite-region">
+        <div class="region-info">
+          <i class="pi pi-map-marker region-icon" style="font-size: 32px;"></i>
+          <div class="region-details">
+            <h3>{{ userStatsSignal().favoriteRegion }}</h3>
+            <p>Most explored transit network</p>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card header="Level Progress" class="level-progress">
+        <div class="level-info">
+          <div class="current-level">
+            <span class="level-number">{{ userStatsSignal().level }}</span>
+            <span class="level-label">Current Level</span>
+          </div>
+          <div class="level-details">
+            <div class="points-info">
+              <span>{{ userStatsSignal().totalPoints | number }} / {{ userStatsSignal().level * 1000 | number }} points</span>
+            </div>
+            <p-progress-bar
+              mode="determinate"
+              [value]="(userStatsSignal().totalPoints % 1000) / 10"
+              class="level-progress-bar">
+            </p-progress-bar>
+            <div class="next-level">
+              <span>{{ (userStatsSignal().level * 1000 - userStatsSignal().totalPoints) | number }} points to level {{ userStatsSignal().level + 1 }}</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  }
+
+  <div class="profile-actions">
+    <p-card header="Actions" class="actions-card">
+      <div class="action-buttons">
+        <button pButton severity="primary" (click)="shareProgress()">
+          <i class="pi pi-star"></i>
+          Share Progress
+        </button>
+        <button pButton (click)="exportData()">
+          <i class="pi pi-download"></i>
+          Export Data
+        </button>
+        <button pButton severity="warn" (click)="resetProgress()">
+          <i class="pi pi-times-circle"></i>
+          Reset Progress
+        </button>
+      </div>
+    </p-card>
+  </div>
+</div>

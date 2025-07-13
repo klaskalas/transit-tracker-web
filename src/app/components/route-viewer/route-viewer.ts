@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouteService } from '../route-service';
+import { RouteService } from '../../route-service';
 import { ActivatedRoute } from '@angular/router';
 import {GeoJSONSourceComponent, LayerComponent, MapComponent} from 'ngx-mapbox-gl';
 import mapboxgl from 'mapbox-gl';

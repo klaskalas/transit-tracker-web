@@ -30,6 +30,7 @@
               }
             ],
             "styles": [
+              "node_modules/primeicons/primeicons.css",
               "mapbox-gl/dist/mapbox-gl.css",
               "src/styles.scss"
             ]
@@ -89,6 +90,8 @@
               }
             ],
             "styles": [
+              "node_modules/primeicons/primeicons.css",
+              "mapbox-gl/dist/mapbox-gl.css",
               "src/styles.scss"
             ]
           }

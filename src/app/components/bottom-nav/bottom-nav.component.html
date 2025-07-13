@@ -1,0 +1,18 @@
+<div class="bottom-nav">
+  <button pButton class="nav-button" [class.active]="activeRoute === 'map'" (click)="navigateTo('map')">
+    <i class="pi pi-map" style="font-size: 1.25rem;"></i>
+    <span class="nav-label">Map</span>
+  </button>
+  <button pButton class="nav-button" [class.active]="activeRoute === 'progress'" (click)="navigateTo('progress')">
+    <i class="pi pi-chart-line" style="font-size: 1.25rem;"></i>
+    <span class="nav-label">Progress</span>
+  </button>
+  <button pButton class="nav-button" [class.active]="activeRoute === 'achievements'" (click)="navigateTo('achievements')">
+    <i class="pi pi-star-fill" style="font-size: 1.25rem;"></i>
+    <span class="nav-label">Achievements</span>
+  </button>
+  <button pButton class="nav-button" [class.active]="activeRoute === 'profile'" (click)="navigateTo('profile')">
+    <i class="pi pi-user" style="font-size: 1.25rem;"></i>
+    <span class="nav-label">Profile</span>
+  </button>
+</div>
