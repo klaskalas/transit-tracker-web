@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouteService } from '../../route-service';
+import { RouteService } from '../../../services/route-service';
 import { ActivatedRoute } from '@angular/router';
 import {GeoJSONSourceComponent, LayerComponent, MapComponent} from 'ngx-mapbox-gl';
 import mapboxgl from 'mapbox-gl';
@@ -30,8 +30,8 @@ export class RouteViewerComponent implements OnInit {
   };
 
   onMapCreate(map: mapboxgl.Map) {
-    const shapeId = this.route.snapshot.paramMap.get('shapeId')!;
-    this.routeService.getRouteByShapeId(shapeId).subscribe(route => {
+    const routeId = this.route.snapshot.paramMap.get('routeId')!;
+    this.routeService.getShapeByRouteId(routeId).subscribe(route => {
       const geometry = JSON.parse(route);
 
       this.geoJson = {

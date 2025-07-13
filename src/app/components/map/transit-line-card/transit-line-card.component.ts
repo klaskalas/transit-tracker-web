@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Card} from 'primeng/card';
 import {ButtonDirective} from 'primeng/button';
-import {TransitLine} from '../../models/transit.model';
+import {TransitLine} from '../../../models/transit.model';
 import {CommonModule} from '@angular/common';
+import {RouteType} from '../../../models/enums';
 
 @Component({
   selector: 'app-transit-line-card',
@@ -18,12 +19,18 @@ export class TransitLineCardComponent {
   @Input() line!: TransitLine;
   @Output() toggleCompletion = new EventEmitter<string>();
 
-  getPrimeTypeIcon(type: string): string {
+  getPrimeTypeIcon(type: RouteType): string {
     switch (type) {
-      case 'bus': return 'pi-bus';
-      case 'train': return 'pi-train';
-      case 'tram': return 'pi-compass';
-      case 'metro': return 'pi-directions';
+      case RouteType.Bus:
+        return 'pi-bus';
+      case RouteType.LongDistanceTrain:
+      case RouteType.LocalTrain:
+      case RouteType.HighSpeedRail:
+        return 'pi-train';
+      case RouteType.Tram:
+        return 'pi-compass';
+      case RouteType.Subway:
+        return 'pi-directions';
       default: return 'pi-map';
     }
   }

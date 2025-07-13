@@ -1,5 +1,5 @@
 import {Component, computed, OnInit, Signal} from '@angular/core';
-import {AchievementCardComponent} from '../achievement-card/achievement-card.component';
+import {AchievementCardComponent} from './achievement-card/achievement-card.component';
 import {Achievement} from '../../models/achievement.model';
 import {TransitService} from '../../services/transit.service';
 import {CommonModule} from '@angular/common';

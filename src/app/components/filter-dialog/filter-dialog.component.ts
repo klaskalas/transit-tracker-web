@@ -1,12 +1,13 @@
 import {Component, inject} from '@angular/core';
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {FilterOptions, TransitType} from '../../models/transit.model';
+import {FilterOptions} from '../../models/transit.model';
 import {Checkbox} from 'primeng/checkbox';
 import {Select} from 'primeng/select';
 import {ButtonDirective} from 'primeng/button';
 import {FormsModule} from '@angular/forms';
 import {Divider} from 'primeng/divider';
 import {CommonModule} from '@angular/common';
+import {RouteType} from '../../models/enums';
 
 @Component({
   selector: 'app-filter-dialog',
@@ -26,11 +27,11 @@ import {CommonModule} from '@angular/common';
 export class FilterDialogComponent {
   filters: FilterOptions;
 
-  transitTypes: { value: TransitType; label: string }[] = [
-    { value: 'train', label: 'Train' },
-    { value: 'tram', label: 'Tram' },
-    { value: 'metro', label: 'Metro' },
-    { value: 'bus', label: 'Bus' }
+  transitTypes: { value: RouteType; label: string }[] = [
+    { value: RouteType.LocalTrain, label: 'Train' },
+    { value: RouteType.Tram, label: 'Tram' },
+    { value: RouteType.Subway, label: 'Metro' },
+    { value: RouteType.Bus, label: 'Bus' }
   ];
 
   regions: string[] = ['Stockholm', 'Tokyo', 'London', 'New York', 'Paris'];
@@ -48,7 +49,7 @@ export class FilterDialogComponent {
     this.filters = this.config.data;
   }
 
-  onTypeChange(type: TransitType, checked: boolean): void {
+  onTypeChange(type: RouteType, checked: boolean): void {
     if (checked) {
       if (!this.filters.types.includes(type)) {
         this.filters.types.push(type);
@@ -68,7 +69,7 @@ export class FilterDialogComponent {
     }
   }
 
-  isTypeSelected(type: TransitType): boolean {
+  isTypeSelected(type: RouteType): boolean {
     return this.filters.types.includes(type);
   }
 

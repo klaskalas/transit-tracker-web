@@ -2,33 +2,33 @@
   <ng-template #header>
     <div class="line-indicator" [style.background-color]="line.color"></div>
     <div class="card-actions">
-      <i class="type-icon pi" [ngClass]="getPrimeTypeIcon(line.type)"></i>
+      <i class="type-icon pi" [ngClass]="getPrimeTypeIcon(line.routeType)"></i>
     </div>
   </ng-template>
 
-  <ng-template #title>{{ line.name }}</ng-template>
+  <ng-template #title>{{ line.shortName }}</ng-template>
   <ng-template #subtitle>{{ line.region }}</ng-template>
 
   <div class="line-details">
-    <div class="detail-item">
-      <i class="pi pi-clock" style="font-size: 16px;"></i>
-      <span>{{ line.operatingHours }}</span>
-    </div>
+<!--    <div class="detail-item">-->
+<!--      <i class="pi pi-clock" style="font-size: 16px;"></i>-->
+<!--      <span>{{ line.operatingHours }}</span>-->
+<!--    </div>-->
     <div class="detail-item">
       <i class="pi pi-star" style="font-size: 16px;"></i>
       <span>{{ line.points }} points</span>
     </div>
   </div>
 
-  <div class="stops-preview">
-    <span class="stops-label">Stops:</span>
-    <span class="stops-text">
-      {{ line.stops.slice(0, 3).join(' • ') }}
-      @if (line.stops.length > 3) {
-        <span>...</span>
-      }
-    </span>
-  </div>
+<!--  <div class="stops-preview">-->
+<!--    <span class="stops-label">Stops:</span>-->
+<!--    <span class="stops-text">-->
+<!--      {{ line.stops.slice(0, 3).join(' • ') }}-->
+<!--      @if (line.stops.length > 3) {-->
+<!--        <span>...</span>-->
+<!--      }-->
+<!--    </span>-->
+<!--  </div>-->
 
   @if (line.completed && line.completedDate) {
     <div class="completion-info">

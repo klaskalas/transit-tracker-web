@@ -8,7 +8,7 @@ export class RouteService {
 
   baseUrl = 'http://localhost:5134';
 
-  getRouteByShapeId(shapeId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/api/routes/${shapeId}/shape`);
+  getShapeByRouteId(shapeId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/routes/${routeId}/shape`);
   }
 }

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import {Card} from 'primeng/card';
 import {CommonModule, DecimalPipe} from '@angular/common';
 import {ProgressBar} from 'primeng/progressbar';
-import {Achievement} from '../../models/achievement.model';
+import {Achievement} from '../../../models/achievement.model';
 
 @Component({
   selector: 'app-achievement-card',

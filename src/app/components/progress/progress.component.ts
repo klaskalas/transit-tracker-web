@@ -1,10 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { CommonModule, DecimalPipe, TitleCasePipe } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { TransitService } from '../../services/transit.service';
 import { UserStats } from '../../models/user-stats.model';
 import { TransitLine } from '../../models/transit.model';
 import { ProgressBar } from 'primeng/progressbar';
 import { Card } from 'primeng/card';
+import {RouteType} from '../../models/enums';
 
 @Component({
   selector: 'app-progress',
@@ -15,8 +16,7 @@ import { Card } from 'primeng/card';
     CommonModule,
     ProgressBar,
     Card,
-    DecimalPipe,
-    TitleCasePipe
+    DecimalPipe
   ]
 })
 export class ProgressComponent implements OnInit {
@@ -35,12 +35,12 @@ export class ProgressComponent implements OnInit {
   }
 
   getTypeStats(lines: TransitLine[]) {
-    const types = ['train', 'tram', 'metro', 'bus'];
-    return types.map(type => {
-      const typeLines = lines.filter(line => line.type === type);
+    const types = [RouteType.Bus, RouteType.Tram, RouteType.LocalTrain, RouteType.LongDistanceTrain, RouteType.Subway];
+    return types.map(routeType => {
+      const typeLines = lines.filter(line => line.routeType === routeType);
       const completed = typeLines.filter(line => line.completed).length;
       return {
-        type,
+        routeType,
         total: typeLines.length,
         completed,
         percentage: this.getCompletionPercentage(completed, typeLines.length)
@@ -61,4 +61,6 @@ export class ProgressComponent implements OnInit {
       };
     });
   }
+
+  protected readonly RouteType = RouteType;
 }

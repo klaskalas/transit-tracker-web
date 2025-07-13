@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FilterDialogComponent } from '../filter-dialog/filter-dialog.component';
-import {RouteViewerComponent} from '../route-viewer/route-viewer';
-import {TransitLineCardComponent} from '../transit-line-card/transit-line-card.component';
+import {RouteViewerComponent} from './route-viewer/route-viewer';
+import {TransitLineCardComponent} from './transit-line-card/transit-line-card.component';
 import {AsyncPipe, CommonModule} from '@angular/common';
 import {FilterOptions, TransitLine} from '../../models/transit.model';
 import {TransitService} from '../../services/transit.service';

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import {RouteViewerComponent} from './components/route-viewer/route-viewer';
+import {RouteViewerComponent} from './components/map/route-viewer/route-viewer';
 import {MapComponent} from './components/map/map.component';
 import {ProgressComponent} from './components/progress/progress.component';
 import {AchievementsComponent} from './components/achievements/achievements.component';

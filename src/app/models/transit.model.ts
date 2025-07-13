@@ -1,20 +1,21 @@
+import {RouteType} from './enums';
+
 export interface TransitLine {
   id: string;
-  name: string;
-  type: TransitType;
+  agencyId: string;
+  gtfsRouteId: string;
+  shortName: string;
+  longName: string;
+  routeType: RouteType;
   region: string;
   color: string;
-  stops: string[];
-  operatingHours: string;
   completed: boolean;
   completedDate?: Date;
   points: number;
 }
 
-export type TransitType = 'train' | 'tram' | 'metro' | 'bus';
-
 export interface FilterOptions {
-  types: TransitType[];
+  types: RouteType[];
   regions: string[];
   completionStatus: 'all' | 'completed' | 'incomplete';
 }
