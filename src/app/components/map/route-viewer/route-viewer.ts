@@ -1,24 +1,36 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, effect, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteService } from '../../../services/route-service';
-import { ActivatedRoute } from '@angular/router';
 import {GeoJSONSourceComponent, LayerComponent, MapComponent} from 'ngx-mapbox-gl';
 import mapboxgl from 'mapbox-gl';
+import {FeatureCollection} from 'geojson';
 
 @Component({
   selector: 'app-route-viewer',
   standalone: true,
   imports: [CommonModule, GeoJSONSourceComponent, LayerComponent, MapComponent, LayerComponent],
   templateUrl: './route-viewer.html',
-  providers: [RouteService]
 })
 export class RouteViewerComponent implements OnInit {
-  geoJson: any;
+  private routeService = inject(RouteService);
 
-  constructor(
-    private routeService: RouteService,
-    private route: ActivatedRoute
-  ) {}
+  geoJson: FeatureCollection;
+  readonly routeId = this.routeService.selectedRouteId;
+  map: mapboxgl.Map;
+
+  constructor() {
+    effect(() => {
+      const routeId = this.routeId();
+      if (!routeId || !this.map) return;
+
+      if (routeId) {
+        this.routeService.getShapeByRouteId(routeId).subscribe(geoJson => {
+          this.geoJson = geoJson;
+          this.fitMapToLineStringCoordinates(geoJson);
+        });
+      }
+    });
+  }
 
   ngOnInit(): void {
 
@@ -30,32 +42,31 @@ export class RouteViewerComponent implements OnInit {
   };
 
   onMapCreate(map: mapboxgl.Map) {
-    const routeId = this.route.snapshot.paramMap.get('routeId')!;
-    this.routeService.getShapeByRouteId(routeId).subscribe(route => {
-      const geometry = JSON.parse(route);
-
-      this.geoJson = {
-        type: "FeatureCollection",
-        features: [{
-          type: "Feature",
-          geometry: geometry,
-          properties: {
-            name: "Example Line",
-            description: "This is a sample LineString"
-          }
-        }]
-      };
-
-      const coords = geometry.coordinates;
-      if (!coords?.length) return;
-
-      const bounds = coords.reduce(
-        (b: mapboxgl.LngLatBounds, coord: number[]) =>
-          b.extend(coord as [number, number]),
-        new mapboxgl.LngLatBounds(coords[0], coords[0])
-      );
-
-      map.fitBounds(bounds, { padding: 40 });
-    });
+    this.map = map;
   }
+
+  private fitMapToLineStringCoordinates(geoJson: FeatureCollection): void {
+    const features = geoJson.features;
+
+    if (!features?.length) return;
+
+    // Flatten all LineString coordinates
+    const allCoords: [number, number][] = features.flatMap(feature => {
+      if (feature.geometry?.type === 'LineString') {
+        return feature.geometry.coordinates as [number, number][];
+      }
+      return [];
+    });
+
+    if (!allCoords.length) return;
+
+    // Fit the map bounds to all collected coordinates
+    const bounds = allCoords.reduce(
+      (b, coord) => b.extend(coord),
+      new mapboxgl.LngLatBounds(allCoords[0], allCoords[0])
+    );
+
+    this.map.fitBounds(bounds, { padding: 40 });
+  }
+
 }

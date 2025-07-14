@@ -1,4 +1,4 @@
-<p-card class="transit-card" [class.completed]="line.completed">
+<p-card class="transit-card" [class.completed]="line.completed" (click)="previewLine(line.id)">
   <ng-template #header>
     <div class="line-indicator" [style.background-color]="line.color"></div>
     <div class="card-actions">
@@ -6,7 +6,11 @@
     </div>
   </ng-template>
 
-  <ng-template #title>{{ line.shortName }}</ng-template>
+  <ng-template #title>Linje {{ line.shortName }}
+    @if (line.longName) {
+      - {{ line.longName }}
+    }
+  </ng-template>
   <ng-template #subtitle>{{ line.region }}</ng-template>
 
   <div class="line-details">

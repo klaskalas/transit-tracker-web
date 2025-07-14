@@ -4,6 +4,7 @@ import {ButtonDirective} from 'primeng/button';
 import {TransitLine} from '../../../models/transit.model';
 import {CommonModule} from '@angular/common';
 import {RouteType} from '../../../models/enums';
+import {RouteService} from '../../../services/route-service';
 
 @Component({
   selector: 'app-transit-line-card',
@@ -16,6 +17,8 @@ import {RouteType} from '../../../models/enums';
   styleUrls: ['./transit-line-card.component.scss']
 })
 export class TransitLineCardComponent {
+  constructor(private routeService: RouteService) { }
+
   @Input() line!: TransitLine;
   @Output() toggleCompletion = new EventEmitter<string>();
 
@@ -45,5 +48,10 @@ export class TransitLineCardComponent {
       day: 'numeric',
       year: 'numeric'
     }).format(date);
+  }
+
+  previewLine(routeId: string) {
+    console.log('Previewing line', routeId);
+    this.routeService.setSelectedRoute(routeId);
   }
 }
