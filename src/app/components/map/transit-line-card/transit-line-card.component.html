@@ -1,17 +1,22 @@
 <p-card class="transit-card" [class.completed]="line.completed" (click)="previewLine(line.id)">
-  <ng-template #header>
-    <div class="line-indicator" [style.background-color]="line.color"></div>
-    <div class="card-actions">
-      <i class="type-icon pi" [ngClass]="getPrimeTypeIcon(line.routeType)"></i>
-    </div>
-  </ng-template>
+<!--  <ng-template #header>-->
+<!--    <div class="line-indicator" [style.background-color]="line.color"></div>-->
+<!--    <div class="card-actions">-->
+<!--      <i class="type-icon pi" [ngClass]="getPrimeTypeIcon(line.routeType)"></i>-->
+<!--    </div>-->
+<!--  </ng-template>-->
 
-  <ng-template #title>Linje {{ line.shortName }}
-    @if (line.longName) {
-      - {{ line.longName }}
-    }
+  <ng-template #title>
+
+      <fa-icon style="font-size: 16px" [icon]="getPrimeTypeIcon(line.routeType)"></fa-icon>
+      &nbsp;
+      Linje {{ line.shortName }}
+      @if (line.longName) {
+        - {{ line.longName }}
+      }
+
   </ng-template>
-  <ng-template #subtitle>{{ line.region }}</ng-template>
+  <ng-template #subtitle>{{ line.agency.name }}</ng-template>
 
   <div class="line-details">
 <!--    <div class="detail-item">-->

@@ -26,6 +26,8 @@
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/router": "^20.0.0",
+    "@fortawesome/angular-fontawesome": "^2.0.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@primeuix/themes": "^1.2.1",
     "ngx-mapbox-gl": "^13.0.0",
     "primeicons": "^7.0.0",

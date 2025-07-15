@@ -6,7 +6,6 @@ import {TransitLineCardComponent} from './transit-line-card/transit-line-card.co
 import {AsyncPipe, CommonModule} from '@angular/common';
 import {FilterOptions, TransitLine} from '../../models/transit.model';
 import {TransitService} from '../../services/transit.service';
-import {ButtonDirective, ButtonLabel} from 'primeng/button';
 import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
 
 @Component({
@@ -17,8 +16,6 @@ import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
     RouteViewerComponent,
     TransitLineCardComponent,
     AsyncPipe,
-    ButtonDirective,
-    ButtonLabel,
   ],
   styleUrls: ['./map.component.scss'],
   providers: [DialogService]

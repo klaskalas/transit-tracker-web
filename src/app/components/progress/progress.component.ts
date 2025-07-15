@@ -35,7 +35,7 @@ export class ProgressComponent implements OnInit {
   }
 
   getTypeStats(lines: TransitLine[]) {
-    const types = [RouteType.Bus, RouteType.Tram, RouteType.LocalTrain, RouteType.LongDistanceTrain, RouteType.Subway];
+    const types = [RouteType.RailwayService, RouteType.CoachService, RouteType.UrbanRailwayService, RouteType.BusService, RouteType.TramService, RouteType.WaterTransport];
     return types.map(routeType => {
       const typeLines = lines.filter(line => line.routeType === routeType);
       const completed = typeLines.filter(line => line.completed).length;

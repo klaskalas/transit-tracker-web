@@ -59,7 +59,7 @@
           @for (stat of getTypeStats(transitLinesSignal()); track stat.routeType) {
             <div class="type-stat">
               <div class="type-header">
-                <i class="pi" [ngClass]="stat.routeType === RouteType.Bus ? 'pi-bus' : 'pi-train'"></i>
+                <i class="pi" [ngClass]="stat.routeType === RouteType.BusService ? 'pi-bus' : 'pi-train'"></i>
                 <span class="type-name">{{ stat.routeType.toString() }}</span>
                 <span class="type-count">{{ stat.completed }}/{{ stat.total }}</span>
               </div>

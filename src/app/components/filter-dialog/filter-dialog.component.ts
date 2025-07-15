@@ -28,10 +28,10 @@ export class FilterDialogComponent {
   filters: FilterOptions;
 
   transitTypes: { value: RouteType; label: string }[] = [
-    { value: RouteType.LocalTrain, label: 'Train' },
-    { value: RouteType.Tram, label: 'Tram' },
-    { value: RouteType.Subway, label: 'Metro' },
-    { value: RouteType.Bus, label: 'Bus' }
+    { value: RouteType.RailwayService, label: 'Train' },
+    { value: RouteType.TramService, label: 'Tram' },
+    { value: RouteType.UrbanRailwayService, label: 'Metro' },
+    { value: RouteType.BusService, label: 'Bus' }
   ];
 
   regions: string[] = ['Stockholm', 'Tokyo', 'London', 'New York', 'Paris'];

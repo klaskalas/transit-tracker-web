@@ -2,7 +2,7 @@ import {RouteType} from './enums';
 
 export interface TransitLine {
   id: string;
-  agencyId: string;
+  agency: Agency;
   gtfsRouteId: string;
   shortName: string;
   longName: string;
@@ -18,4 +18,12 @@ export interface FilterOptions {
   types: RouteType[];
   regions: string[];
   completionStatus: 'all' | 'completed' | 'incomplete';
+}
+
+export interface Agency {
+  id: number;
+  name: string;
+  agencyUrl: string;
+  timezone: string;
+  countryCode: string;
 }

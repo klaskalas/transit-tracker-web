@@ -1,14 +1,24 @@
 <div class="map-container">
-  <div class="map-header">
-    <h2>Transit Lines</h2>
-    <button pButton (click)="openFilterDialog()">
-      <i class="pi pi-filter" style="margin-right: 0.5rem;"></i>
-      <span pButtonLabel>Filter</span>
-    </button>
-  </div>
-
   <div class="map-content">
     <app-route-viewer></app-route-viewer>
+
+    <div class="filter-container">
+      <div class="filter-buttons">
+        <button class="filter-button active" data-filter="all">All</button>
+        <button class="filter-button" data-filter="completed">Completed</button>
+        <button class="filter-button" data-filter="incomplete">Incomplete</button>
+      </div>
+    </div>
+
+    <div class="type-filter-container">
+      <div class="type-buttons">
+        <button class="type-button active" data-type="all" style="background-color: #6B7280;">All</button>
+        <button class="type-button" data-type="metro" style="background-color: #3B82F6;">Metro</button>
+        <button class="type-button" data-type="bus" style="background-color: #10B981;">Bus</button>
+        <button class="type-button" data-type="tram" style="background-color: #F59E0B;">Tram</button>
+        <button class="type-button" data-type="train" style="background-color: #8B5CF6;">Train</button>
+      </div>
+    </div>
 
     <div class="lines-list">
       @for(line of (transitLines$ | async); track line.id) {
