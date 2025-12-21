@@ -1,88 +1,312 @@
 .achievements-container {
-  padding: 16px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 24px;
+  background: #f6f7f9;
   min-height: 100%;
 }
 
 .achievements-header {
-  text-align: center;
   margin-bottom: 32px;
 
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: #ffe08a;
+    color: #7a4b00;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+  }
+
   h2 {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-weight: 600;
-    font-size: 28px;
+    margin: 0 0 6px 0;
+    color: #111827;
+    font-weight: 700;
+    font-size: 30px;
   }
 
   p {
     margin: 0;
-    color: #666;
+    color: #64748b;
     font-size: 16px;
   }
 }
 
-.achievements-content {
-  .achievements-section {
-    margin-bottom: 40px;
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
 
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      font-size: 20px;
-      font-weight: 600;
+.summary-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
-      &.unlocked {
-        color: #4caf50;
+.progress-card {
+  align-items: center;
+}
 
-        .pi {
-          color: #4caf50;
-        }
-      }
+.progress-ring {
+  --progress: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  background: conic-gradient(#2f5bff calc(var(--progress) * 1%), #e5e7eb 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-      &.locked {
-        color: #ff9800;
+.progress-center {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px #e5e7eb;
+}
 
-        .pi {
-          color: #ff9800;
-        }
-      }
-    }
+.progress-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+}
 
-    .achievements-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
+.progress-label {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.progress-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progress-title {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.progress-percent {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.progress-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.progress-meta {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.tier-card {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.tier-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  color: #111827;
+}
+
+.tier-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tier-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tier-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.tier-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tier-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.tier-bar {
+  height: 8px;
+  background: #eef2f7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tier-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.tier-count {
+  font-size: 14px;
+  color: #64748b;
+  min-width: 44px;
+  text-align: right;
+}
+
+.tier-gold .tier-icon {
+  background: #facc15;
+  color: #7a4b00;
+}
+
+.tier-gold .tier-fill {
+  background: #f59e0b;
+}
+
+.tier-silver .tier-icon {
+  background: #cbd5f5;
+  color: #1f2a44;
+}
+
+.tier-silver .tier-fill {
+  background: #64748b;
+}
+
+.tier-bronze .tier-icon {
+  background: #c0841b;
+  color: #ffffff;
+}
+
+.tier-bronze .tier-fill {
+  background: #92400e;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.status-filters,
+.tier-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-filters button,
+.tier-filters button {
+  border: none;
+  background: #eef2f7;
+  color: #334155;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.status-filters button.active,
+.tier-filters button.active {
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+  color: #111827;
+}
+
+.tier-label {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+
+  .empty-icon {
+    color: #ccc;
+    margin-bottom: 20px;
   }
 
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: #666;
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
 
-    .empty-icon {
-      color: #ccc;
-      margin-bottom: 20px;
-    }
-
-    h3 {
-      margin: 0 0 12px 0;
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    p {
-      margin: 0;
-      font-size: 16px;
-    }
+  p {
+    margin: 0;
+    font-size: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .achievements-content .achievements-section .achievements-grid {
+  .summary-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .progress-ring {
+    width: 130px;
+    height: 130px;
+  }
+
+  .progress-center {
+    width: 104px;
+    height: 104px;
+  }
+
+  .achievements-grid {
     grid-template-columns: 1fr;
   }
 }

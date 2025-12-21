@@ -7,6 +7,7 @@ import {AsyncPipe, CommonModule} from '@angular/common';
 import {FilterOptions, TransitLine} from '../../models/transit.model';
 import {TransitService} from '../../services/transit.service';
 import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {SearchFilterPanelComponent} from './search-filter-panel/search-filter-panel.component';
 
 @Component({
   selector: 'app-map',
@@ -15,6 +16,7 @@ import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
     CommonModule,
     RouteViewerComponent,
     TransitLineCardComponent,
+    SearchFilterPanelComponent,
     AsyncPipe,
   ],
   styleUrls: ['./map.component.scss'],
@@ -28,6 +30,29 @@ export class MapComponent implements OnInit {
     completionStatus: 'all'
   };
   dialogRef: DynamicDialogRef | undefined;
+  searchTerm = '';
+  selectedCity = 'all';
+  selectedType = 'all';
+  viewMode: 'grid' | 'list' = 'grid';
+  collectionStatus: 'all' | 'collected' | 'notCollected' = 'all';
+  cityOptions = [
+    { label: 'All Cities', value: 'all' },
+    { label: 'Stockholm', value: 'stockholm' },
+    { label: 'London', value: 'london' },
+    { label: 'Tokyo', value: 'tokyo' },
+  ];
+  typeOptions = [
+    { label: 'All Types', value: 'all' },
+    { label: 'Metro', value: 'metro' },
+    { label: 'Bus', value: 'bus' },
+    { label: 'Tram', value: 'tram' },
+    { label: 'Train', value: 'train' },
+  ];
+  collectionOptions = [
+    { label: 'All', value: 'all' },
+    { label: 'Collected', value: 'collected' },
+    { label: 'Not Collected', value: 'notCollected' },
+  ];
 
   constructor(
     private transitService: TransitService,
@@ -61,5 +86,9 @@ export class MapComponent implements OnInit {
 
   onLineToggle(lineId: string): void {
     this.transitService.toggleLineCompletion(lineId);
+  }
+
+  setViewMode(mode: 'grid' | 'list'): void {
+    this.viewMode = mode;
   }
 }

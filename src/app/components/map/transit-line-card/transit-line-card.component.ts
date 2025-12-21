@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Card} from 'primeng/card';
 import {ButtonDirective} from 'primeng/button';
+import {TagModule} from 'primeng/tag';
 import {TransitLine} from '../../../models/transit.model';
 import {CommonModule} from '@angular/common';
 import {RouteType} from '../../../models/enums';
@@ -23,6 +24,7 @@ import {
     CommonModule,
     Card,
     ButtonDirective,
+    TagModule,
     FontAwesomeModule
   ],
   styleUrls: ['./transit-line-card.component.scss']
@@ -31,6 +33,7 @@ export class TransitLineCardComponent {
   constructor(private routeService: RouteService) { }
 
   @Input() line!: TransitLine;
+  @Input() viewMode: 'grid' | 'list' = 'grid';
   @Output() toggleCompletion = new EventEmitter<string>();
 
   getPrimeTypeIcon(type: RouteType): IconDefinition {
@@ -113,5 +116,13 @@ export class TransitLineCardComponent {
   previewLine(routeId: string) {
     console.log('Previewing line', routeId);
     this.routeService.setSelectedRoute(routeId);
+  }
+
+  getStationCount(points: number): number {
+    return Math.max(10, Math.round(points / 2));
+  }
+
+  getDistance(points: number): string {
+    return (Math.max(5, points / 3)).toFixed(1);
   }
 }

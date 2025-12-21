@@ -1,59 +1,56 @@
-<p-card class="transit-card" [class.completed]="line.completed" (click)="previewLine(line.id)">
-<!--  <ng-template #header>-->
-<!--    <div class="line-indicator" [style.background-color]="line.color"></div>-->
-<!--    <div class="card-actions">-->
-<!--      <i class="type-icon pi" [ngClass]="getPrimeTypeIcon(line.routeType)"></i>-->
-<!--    </div>-->
-<!--  </ng-template>-->
-
-  <ng-template #title>
-
-      <fa-icon style="font-size: 16px" [icon]="getPrimeTypeIcon(line.routeType)"></fa-icon>
-      &nbsp;
-      Linje {{ line.shortName }}
-      @if (line.longName) {
-        - {{ line.longName }}
+<p-card
+  class="transit-card"
+  [class.completed]="line.completed"
+  [class.list-view]="viewMode === 'list'"
+  (click)="previewLine(line.id)">
+  <div class="card-accent" [style.background-color]="line.color"></div>
+  <div class="card-header">
+    <div class="line-badge" [style.background-color]="line.color">
+      {{ line.shortName }}
+    </div>
+    <div class="line-main">
+      <div class="line-title">
+        <span class="line-name">{{ line.longName || 'Line ' + line.shortName }}</span>
+        <fa-icon class="type-icon" [icon]="getPrimeTypeIcon(line.routeType)"></fa-icon>
+      </div>
+      <div class="line-location">
+        <i class="pi pi-map-marker"></i>
+        <span>{{ line.region }}, {{ line.agency.countryCode }}</span>
+      </div>
+    </div>
+    <div class="line-status">
+      @if (line.completed) {
+        <p-tag value="Collected" icon="pi pi-check" severity="success" [rounded]="true"></p-tag>
       }
-
-  </ng-template>
-  <ng-template #subtitle>{{ line.agency.name }}</ng-template>
-
-  <div class="line-details">
-<!--    <div class="detail-item">-->
-<!--      <i class="pi pi-clock" style="font-size: 16px;"></i>-->
-<!--      <span>{{ line.operatingHours }}</span>-->
-<!--    </div>-->
-    <div class="detail-item">
-      <i class="pi pi-star" style="font-size: 16px;"></i>
-      <span>{{ line.points }} points</span>
     </div>
   </div>
 
-<!--  <div class="stops-preview">-->
-<!--    <span class="stops-label">Stops:</span>-->
-<!--    <span class="stops-text">-->
-<!--      {{ line.stops.slice(0, 3).join(' • ') }}-->
-<!--      @if (line.stops.length > 3) {-->
-<!--        <span>...</span>-->
-<!--      }-->
-<!--    </span>-->
-<!--  </div>-->
-
-  @if (line.completed && line.completedDate) {
-    <div class="completion-info">
-      <i class="pi pi-calendar" style="font-size: 16px;"></i>
-      <span>Completed {{ formatDate(line.completedDate) }}</span>
+  <div class="line-stats">
+    <div class="stat-item">
+      <i class="pi pi-sitemap"></i>
+      <span>{{ getStationCount(line.points) }} stations</span>
     </div>
-  }
+    <div class="stat-item">
+      <i class="pi pi-compass"></i>
+      <span>{{ getDistance(line.points) }} km</span>
+    </div>
+  </div>
 
-  <ng-template #footer>
+  <div class="card-footer">
     <button
       pButton
-      [severity]="line.completed ? 'warn' : 'primary'"
-      (click)="onToggleCompletion()"
+      [outlined]="line.completed"
+      [severity]="line.completed ? 'secondary' : 'primary'"
+      [icon]="line.completed ? 'pi pi-check' : (viewMode === 'list' ? null : 'pi pi-plus')"
+      (click)="$event.stopPropagation(); onToggleCompletion()"
       class="completion-button"
+      type="button"
     >
-      {{ line.completed ? 'Mark Incomplete' : 'Mark Complete' }}
+      {{
+        line.completed
+          ? (viewMode === 'list' ? 'Collected' : 'In Your Collection')
+          : (viewMode === 'list' ? 'Collect' : 'Add to Collection')
+      }}
     </button>
-  </ng-template>
+  </div>
 </p-card>

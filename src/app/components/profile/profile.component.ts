@@ -6,6 +6,7 @@ import {ButtonDirective} from 'primeng/button';
 import {TransitService} from '../../services/transit.service';
 import {UserStats} from '../../models/user-stats.model';
 import {toSignal} from '@angular/core/rxjs-interop';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -21,7 +22,9 @@ import {toSignal} from '@angular/core/rxjs-interop';
 })
 export class ProfileComponent implements OnInit {
   private transitService = inject(TransitService);
+  private authService = inject(AuthService);
   readonly userStatsSignal = toSignal(this.transitService.userStats$, { initialValue: null });
+  readonly authUserSignal = toSignal(this.authService.user$, { initialValue: null });
 
   ngOnInit(): void {}
 

@@ -1,0 +1,129 @@
+.search-filter-panel {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.search-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+
+  .p-inputtext {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    padding: 10px 14px 10px 38px;
+    font-size: 14px;
+    color: #1f2937;
+  }
+
+  .p-inputtext:focus {
+    border-color: #cbd5f5;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+  }
+
+  .pi-search {
+    left: 12px;
+    color: #64748b;
+  }
+}
+
+.view-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 14px;
+  background: #f3f4f6;
+}
+
+.view-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+
+  &.active {
+    background: #ffffff;
+    color: #111827;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+    border-color: #e5e7eb;
+  }
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.select-field {
+  flex: 1;
+  min-width: 150px;
+
+  &.p-select {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+  }
+
+  .p-select-label {
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .p-select-dropdown {
+    color: #64748b;
+  }
+}
+
+.segmented-control {
+  &.p-selectbutton {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 14px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+  }
+
+  .p-button {
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.2s ease;
+  }
+
+  .p-button.p-highlight {
+    background: #ffffff;
+    color: #111827;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+  }
+}

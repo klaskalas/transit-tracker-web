@@ -1,99 +1,80 @@
 .achievement-card {
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  border-radius: 18px;
+  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+  border: 2px solid #f1d2b8;
+  background: #ffffff;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
   }
 
   &.unlocked {
-    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-    border: 2px solid #ff9800;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #ff9800, #ffc107);
-    }
+    border-color: #f1d2b8;
   }
 
-  .mat-mdc-card-content {
-    padding: 20px;
+  .p-card-body {
+    padding: 18px;
   }
 
   .achievement-header {
     display: flex;
     align-items: flex-start;
     gap: 16px;
-    margin-bottom: 16px;
 
     .achievement-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f5f5f5;
-      color: #999;
+      background: #b45309;
+      color: #fff7ed;
       transition: all 0.3s ease;
+      position: relative;
 
       &.unlocked {
-        background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
-        color: white;
-        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        background: #b45309;
       }
     }
 
     .achievement-info {
       flex: 1;
 
+      .title-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
       .achievement-title {
-        margin: 0 0 8px 0;
+        margin: 0;
         font-size: 18px;
-        font-weight: 600;
-        color: #333;
+        font-weight: 700;
+        color: #111827;
       }
 
       .achievement-description {
-        margin: 0;
+        margin: 6px 0 4px;
         font-size: 14px;
-        color: #666;
+        color: #64748b;
         line-height: 1.4;
       }
-    }
 
-    .achievement-points {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 8px;
-      min-width: 50px;
-
-      .points-value {
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 1;
-      }
-
-      .points-label {
-        font-size: 12px;
-        opacity: 0.9;
+      .achievement-date {
+        font-size: 13px;
+        color: #94a3b8;
       }
     }
   }
 
   .achievement-progress {
+    margin-top: 12px;
+
     .progress-info {
       display: flex;
       justify-content: space-between;
@@ -102,12 +83,12 @@
       font-size: 14px;
 
       .progress-text {
-        color: #333;
+        color: #111827;
         font-weight: 500;
       }
 
       .progress-percentage {
-        color: #666;
+        color: #64748b;
       }
     }
 
@@ -115,23 +96,48 @@
       height: 8px;
       border-radius: 4px;
 
-      ::ng-deep .mat-mdc-progress-bar-fill::after {
-        background-color: #2196F3;
+      ::ng-deep .p-progressbar-value {
+        background: #b45309;
       }
     }
   }
+}
 
-  .achievement-unlocked {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #4caf50;
-    font-weight: 500;
-    margin-top: 12px;
+.tier-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f1e0d2;
+  color: #9a4b00;
+}
 
-    .pi {
-      color: #4caf50;
-    }
-  }
+.tier-gold {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.tier-silver {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.tier-bronze {
+  background: #f1e0d2;
+  color: #9a4b00;
+}
+
+.locked-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
 }

@@ -1,43 +1,123 @@
 <div class="achievements-container">
   <div class="achievements-header">
-    <h2>Achievements</h2>
-    <p>Unlock badges by completing transit challenges</p>
+    <div class="header-title">
+      <span class="header-icon">
+        <i class="pi pi-trophy"></i>
+      </span>
+      <div>
+        <h2>Achievements</h2>
+        <p>Earn badges and rewards for your transit collecting milestones</p>
+      </div>
+    </div>
   </div>
 
   @if (achievementsSignal() !== null) {
-    @if (unlockedAchievements().length > 0) {
-      <div class="achievements-section">
-        <h3 class="section-title unlocked">
-          <i class="pi pi-trophy"></i>
-          Unlocked Achievements
-        </h3>
-        <div class="achievements-grid">
-          @for (achievement of unlockedAchievements(); track achievement.id) {
-            <app-achievement-card [achievement]="achievement" />
-          }
+    <div class="summary-grid">
+      <div class="summary-card progress-card">
+        <div
+          class="progress-ring"
+          [style.--progress]="completionPercent()">
+          <div class="progress-center">
+            <span class="progress-value">{{ unlockedCount() }}</span>
+            <span class="progress-label">Unlocked</span>
+          </div>
+        </div>
+        <div class="progress-details">
+          <span class="progress-title">Total Progress</span>
+          <span class="progress-percent">{{ completionPercent() }}%</span>
+          <span class="progress-subtitle">Complete</span>
+          <span class="progress-meta">{{ lockedCount() }} achievements remaining</span>
         </div>
       </div>
-    }
 
-    @if (lockedAchievements().length > 0) {
-      <div class="achievements-section">
-        <h3 class="section-title locked">
-          <i class="pi pi-award"></i>
-          In Progress
-        </h3>
-        <div class="achievements-grid">
-          @for (achievement of lockedAchievements(); track achievement.id) {
-            <app-achievement-card [achievement]="achievement" />
+      <div class="summary-card tier-card">
+        <h3>Achievement Tiers</h3>
+        <div class="tier-list">
+          @for (tier of tierSummary(); track tier.key) {
+            <div class="tier-row" [ngClass]="'tier-' + tier.key">
+              <div class="tier-icon">
+                <i class="pi pi-star-fill"></i>
+              </div>
+              <div class="tier-info">
+                <div class="tier-title">{{ tier.label }}</div>
+                <div class="tier-bar">
+                  <div
+                    class="tier-fill"
+                    [style.width.%]="tier.total ? (tier.unlocked / tier.total) * 100 : 0">
+                  </div>
+                </div>
+              </div>
+              <div class="tier-count">{{ tier.unlocked }}/{{ tier.total }}</div>
+            </div>
           }
         </div>
       </div>
-    }
+    </div>
+
+    <div class="filter-bar">
+      <div class="status-filters">
+        <button
+          type="button"
+          [class.active]="statusFilter === 'all'"
+          (click)="setStatusFilter('all')">
+          <i class="pi pi-star"></i>
+          All ({{ totalAchievements() }})
+        </button>
+        <button
+          type="button"
+          [class.active]="statusFilter === 'unlocked'"
+          (click)="setStatusFilter('unlocked')">
+          <i class="pi pi-unlock"></i>
+          Unlocked ({{ unlockedCount() }})
+        </button>
+        <button
+          type="button"
+          [class.active]="statusFilter === 'locked'"
+          (click)="setStatusFilter('locked')">
+          <i class="pi pi-lock"></i>
+          Locked ({{ lockedCount() }})
+        </button>
+      </div>
+      <div class="tier-filters">
+        <span class="tier-label">Tier:</span>
+        <button
+          type="button"
+          [class.active]="tierFilter === 'all'"
+          (click)="setTierFilter('all')">
+          All Tiers
+        </button>
+        <button
+          type="button"
+          [class.active]="tierFilter === 'bronze'"
+          (click)="setTierFilter('bronze')">
+          Bronze
+        </button>
+        <button
+          type="button"
+          [class.active]="tierFilter === 'silver'"
+          (click)="setTierFilter('silver')">
+          Silver
+        </button>
+        <button
+          type="button"
+          [class.active]="tierFilter === 'gold'"
+          (click)="setTierFilter('gold')">
+          Gold
+        </button>
+      </div>
+    </div>
 
     @if (achievementsSignal()?.length === 0) {
       <div class="empty-state">
         <i class="pi pi-trophy empty-icon" style="font-size: 64px;"></i>
         <h3>No Achievements Yet</h3>
         <p>Start completing transit lines to unlock your first achievement!</p>
+      </div>
+    } @else {
+      <div class="achievements-grid">
+        @for (achievement of filteredAchievements(); track achievement.id) {
+          <app-achievement-card [achievement]="achievement" />
+        }
       </div>
     }
   }

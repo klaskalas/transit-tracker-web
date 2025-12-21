@@ -22,6 +22,20 @@ export class AchievementCardComponent {
     return (this.achievement.progress / this.achievement.requirement) * 100;
   }
 
+  getTierLabel(): 'Bronze' | 'Silver' | 'Gold' {
+    if (this.achievement.points >= 300) {
+      return 'Gold';
+    }
+    if (this.achievement.points >= 200) {
+      return 'Silver';
+    }
+    return 'Bronze';
+  }
+
+  getTierClass(): string {
+    return `tier-${this.getTierLabel().toLowerCase()}`;
+  }
+
   formatDate(date: Date): string {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',

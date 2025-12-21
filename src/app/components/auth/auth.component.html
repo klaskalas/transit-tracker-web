@@ -1,0 +1,56 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Transit Tracker</h2>
+      <p>Sign in to keep your collection synced.</p>
+    </div>
+
+    <div class="auth-toggle">
+      <button
+        type="button"
+        class="toggle-button"
+        [class.active]="mode === 'login'"
+        (click)="toggleMode('login')">
+        Log in
+      </button>
+      <button
+        type="button"
+        class="toggle-button"
+        [class.active]="mode === 'register'"
+        (click)="toggleMode('register')">
+        Create account
+      </button>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submit()">
+      <label class="field">
+        <span>Email</span>
+        <input pInputText type="email" [(ngModel)]="email" name="email" required />
+      </label>
+
+      @if (mode === 'register') {
+        <label class="field">
+          <span>Display name</span>
+          <input pInputText type="text" [(ngModel)]="displayName" name="displayName" />
+        </label>
+      }
+
+      <label class="field">
+        <span>Password</span>
+        <input pInputText type="password" [(ngModel)]="password" name="password" required minlength="8" />
+      </label>
+
+      <button pButton type="submit" [disabled]="isLoading" class="primary-button">
+        {{ mode === 'login' ? 'Log in' : 'Create account' }}
+      </button>
+    </form>
+
+    @if (message) {
+      <div class="auth-message">{{ message }}</div>
+    }
+
+    <div class="auth-footer">
+      <span>OAuth providers coming soon.</span>
+    </div>
+  </div>
+</div>

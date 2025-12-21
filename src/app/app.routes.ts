@@ -4,6 +4,7 @@ import {MapComponent} from './components/map/map.component';
 import {ProgressComponent} from './components/progress/progress.component';
 import {AchievementsComponent} from './components/achievements/achievements.component';
 import {ProfileComponent} from './components/profile/profile.component';
+import {AuthComponent} from './components/auth/auth.component';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,10 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
+  },
+  {
+    path: 'login',
+    component: AuthComponent,
   },
   {
     path: 'routes/:shapeId',

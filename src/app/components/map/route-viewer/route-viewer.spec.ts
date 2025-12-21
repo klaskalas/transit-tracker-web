@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouteViewerComponent } from './route-viewer';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('RouteViewerComponent', () => {
   let component: RouteViewerComponent;
@@ -7,7 +8,7 @@ describe('RouteViewerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouteViewerComponent]
+      imports: [RouteViewerComponent, HttpClientTestingModule]
     })
     .compileComponents();
 

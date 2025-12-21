@@ -1,0 +1,65 @@
+<div class="search-filter-panel">
+  <div class="search-row">
+    <span class="p-input-icon-left search-input">
+      <i class="pi pi-search"></i>
+      <input
+        pInputText
+        type="search"
+        placeholder="Search by name, city, or country..."
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearchTermChange($event)" />
+    </span>
+    <div class="view-toggle" role="group" aria-label="View toggle">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-th-large"
+        [outlined]="viewMode !== 'grid'"
+        styleClass="view-button"
+        [ngClass]="{ active: viewMode === 'grid' }"
+        aria-label="Grid view"
+        (click)="setViewMode('grid')">
+      </button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-list"
+        [outlined]="viewMode !== 'list'"
+        styleClass="view-button"
+        [ngClass]="{ active: viewMode === 'list' }"
+        aria-label="List view"
+        (click)="setViewMode('list')">
+      </button>
+    </div>
+  </div>
+  <div class="filter-row">
+    <p-select
+      [options]="cityOptions"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="selectedCity"
+      (ngModelChange)="onSelectedCityChange($event)"
+      styleClass="select-field"
+      aria-label="City filter">
+    </p-select>
+    <p-select
+      [options]="typeOptions"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="selectedType"
+      (ngModelChange)="onSelectedTypeChange($event)"
+      styleClass="select-field"
+      aria-label="Type filter">
+    </p-select>
+    <p-selectButton
+      [options]="collectionOptions"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="collectionStatus"
+      (ngModelChange)="onCollectionStatusChange($event)"
+      [allowEmpty]="false"
+      styleClass="segmented-control"
+      aria-label="Collection filter">
+    </p-selectButton>
+  </div>
+</div>

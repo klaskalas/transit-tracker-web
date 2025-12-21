@@ -1,19 +1,23 @@
 <p-card class="achievement-card" [class.unlocked]="achievement.unlocked">
   <div class="achievement-header">
     <div class="achievement-icon" [class.unlocked]="achievement.unlocked">
-      <i class="pi" [ngClass]="'pi-' + achievement.icon" style="font-size: 2rem;"></i>
+      <i class="pi" [ngClass]="'pi-' + achievement.icon" style="font-size: 1.6rem;"></i>
+      @if (!achievement.unlocked) {
+        <span class="locked-dot">
+          <i class="pi pi-lock"></i>
+        </span>
+      }
     </div>
     <div class="achievement-info">
-      <h3 class="achievement-title">{{ achievement.title }}</h3>
-      <p class="achievement-description">{{ achievement.description }}</p>
-    </div>
-
-    @if (achievement.unlocked) {
-      <div class="achievement-points">
-        <span class="points-value">{{ achievement.points }}</span>
-        <span class="points-label">pts</span>
+      <div class="title-row">
+        <h3 class="achievement-title">{{ achievement.title }}</h3>
+        <span class="tier-badge" [ngClass]="getTierClass()">{{ getTierLabel() }}</span>
       </div>
-    }
+      <p class="achievement-description">{{ achievement.description }}</p>
+      @if (achievement.unlocked && achievement.unlockedDate) {
+        <span class="achievement-date">Unlocked {{ formatDate(achievement.unlockedDate) }}</span>
+      }
+    </div>
   </div>
 
   @if (!achievement.unlocked) {
@@ -23,13 +27,6 @@
         <span class="progress-percentage">{{ getProgressPercentage() | number:'1.0-0' }}%</span>
       </div>
       <p-progress-bar [value]="getProgressPercentage()" class="progress-bar" />
-    </div>
-  }
-
-  @if (achievement.unlocked && achievement.unlockedDate) {
-    <div class="achievement-unlocked">
-      <i class="pi pi-calendar" style="font-size: 1rem;"></i>
-      <span>Unlocked {{ formatDate(achievement.unlockedDate) }}</span>
     </div>
   }
 </p-card>
