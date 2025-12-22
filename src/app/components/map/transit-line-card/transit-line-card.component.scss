@@ -129,6 +129,19 @@
   justify-content: center;
 }
 
+.completion-button.p-button:not(.is-completed) {
+  border: none;
+  background: linear-gradient(100deg, #2563eb 0%, #8b5cf6 100%);
+  color: #ffffff;
+}
+
+.completion-button.p-button.is-completed {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  box-shadow: none;
+}
+
 .completion-button.p-button-primary {
   border: none;
   background: linear-gradient(100deg, #2563eb 0%, #8b5cf6 100%);

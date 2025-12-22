@@ -49,25 +49,31 @@
   background: #f3f4f6;
 }
 
-.view-button {
+:host ::ng-deep .view-toggle .view-button.p-button {
   width: 40px;
   height: 40px;
   border-radius: 12px;
   border: 1px solid transparent;
-  background: transparent;
+  background: #e2e8f0;
   color: #64748b;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
   padding: 0;
+}
 
-  &.active {
-    background: #ffffff;
-    color: #111827;
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
-    border-color: #e5e7eb;
-  }
+:host ::ng-deep .view-toggle .view-button.p-button.active {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2) !important;
+  border-color: #0f172a !important;
+}
+
+:host ::ng-deep .view-toggle .view-button.p-button:not(.active) {
+  background: #e2e8f0 !important;
+  border-color: transparent !important;
+  color: #64748b !important;
 }
 
 .filter-row {

@@ -34,7 +34,7 @@ export class TransitLineCardComponent {
 
   @Input() line!: TransitLine;
   @Input() viewMode: 'grid' | 'list' = 'grid';
-  @Output() toggleCompletion = new EventEmitter<string>();
+  @Output() toggleCompletion = new EventEmitter<number>();
 
   getPrimeTypeIcon(type: RouteType): IconDefinition {
     // Railway Services (100-199)
@@ -113,7 +113,7 @@ export class TransitLineCardComponent {
     }).format(date);
   }
 
-  previewLine(routeId: string) {
+  previewLine(routeId: number) {
     console.log('Previewing line', routeId);
     this.routeService.setSelectedRoute(routeId);
   }

@@ -18,11 +18,6 @@
         <span>{{ line.region }}, {{ line.agency.countryCode }}</span>
       </div>
     </div>
-    <div class="line-status">
-      @if (line.completed) {
-        <p-tag value="Collected" icon="pi pi-check" severity="success" [rounded]="true"></p-tag>
-      }
-    </div>
   </div>
 
   <div class="line-stats">
@@ -42,14 +37,15 @@
       [outlined]="line.completed"
       [severity]="line.completed ? 'secondary' : 'primary'"
       [icon]="line.completed ? 'pi pi-check' : (viewMode === 'list' ? null : 'pi pi-plus')"
+      [ngClass]="{ 'is-completed': line.completed }"
       (click)="$event.stopPropagation(); onToggleCompletion()"
       class="completion-button"
       type="button"
     >
       {{
         line.completed
-          ? (viewMode === 'list' ? 'Collected' : 'In Your Collection')
-          : (viewMode === 'list' ? 'Collect' : 'Add to Collection')
+          ? (viewMode === 'list' ? 'Visited' : 'Visited')
+          : (viewMode === 'list' ? 'Mark Visited' : 'Mark as Visited')
       }}
     </button>
   </div>

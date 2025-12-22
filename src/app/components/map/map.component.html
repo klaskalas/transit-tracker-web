@@ -5,26 +5,40 @@
     <div class="lines-panel">
       <app-search-filter-panel
         [(searchTerm)]="searchTerm"
+        (searchTermChange)="applyFilters()"
         [(selectedCity)]="selectedCity"
+        (selectedCityChange)="applyFilters()"
         [(selectedType)]="selectedType"
+        (selectedTypeChange)="applyFilters()"
         [(collectionStatus)]="collectionStatus"
+        (collectionStatusChange)="applyFilters()"
         [(viewMode)]="viewMode"
         [cityOptions]="cityOptions"
         [typeOptions]="typeOptions"
         [collectionOptions]="collectionOptions">
       </app-search-filter-panel>
 
-      <div
-        class="lines-list"
-        [ngClass]="{ 'list-mode': viewMode === 'list', 'grid-mode': viewMode === 'grid' }">
-        @for(line of (transitLines$ | async); track line.id) {
-          <app-transit-line-card
-            [line]="line"
-            [viewMode]="viewMode"
-            (toggleCompletion)="onLineToggle($event)">
-          </app-transit-line-card>
+      @if (transitLines$ | async; as lines) {
+        @if (lines.length === 0) {
+          <div class="lines-empty">
+            <i class="pi pi-search"></i>
+            <h4>No matches</h4>
+            <p>Try adjusting your filters or search terms.</p>
+          </div>
+        } @else {
+          <div
+            class="lines-list"
+            [ngClass]="{ 'list-mode': viewMode === 'list', 'grid-mode': viewMode === 'grid' }">
+            @for(line of lines; track line.id) {
+              <app-transit-line-card
+                [line]="line"
+                [viewMode]="viewMode"
+                (toggleCompletion)="onLineToggle($event)">
+              </app-transit-line-card>
+            }
+          </div>
         }
-      </div>
+      }
     </div>
   </div>
 </div>

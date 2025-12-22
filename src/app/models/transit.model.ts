@@ -1,7 +1,7 @@
 import {RouteType} from './enums';
 
 export interface TransitLine {
-  id: string;
+  id: number;
   agency: Agency;
   gtfsRouteId: string;
   shortName: string;

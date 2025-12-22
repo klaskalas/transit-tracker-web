@@ -15,8 +15,6 @@
         type="button"
         icon="pi pi-th-large"
         [outlined]="viewMode !== 'grid'"
-        styleClass="view-button"
-        [ngClass]="{ active: viewMode === 'grid' }"
         aria-label="Grid view"
         (click)="setViewMode('grid')">
       </button>
@@ -25,8 +23,6 @@
         type="button"
         icon="pi pi-list"
         [outlined]="viewMode !== 'list'"
-        styleClass="view-button"
-        [ngClass]="{ active: viewMode === 'list' }"
         aria-label="List view"
         (click)="setViewMode('list')">
       </button>

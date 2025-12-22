@@ -36,8 +36,9 @@
 }
 
 .map-content app-route-viewer {
-  flex: 1;
+  flex: 0 0 auto;
   min-width: 0;
+  height: clamp(280px, 42vh, 520px);
 }
 
 .map-placeholder {
@@ -91,6 +92,33 @@
 
 .lines-list.list-mode {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
+}
+
+.lines-empty {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px 24px;
+  border: 1px dashed #cbd5f5;
+  text-align: center;
+  color: #64748b;
+
+  i {
+    font-size: 24px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+
+  h4 {
+    margin: 0 0 6px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
 }

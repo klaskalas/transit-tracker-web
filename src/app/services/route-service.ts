@@ -6,17 +6,17 @@ import {Observable} from 'rxjs';
 export class RouteService {
   constructor(private http: HttpClient) {}
 
-  private readonly _selectedRouteId = signal<string | null>(null);
+  private readonly _selectedRouteId = signal<number | null>(null);
   readonly selectedRouteId = this._selectedRouteId.asReadonly();
 
-  baseUrl = 'http://localhost:5134';
+  baseUrl = 'https://localhost:7233';
 
-  setSelectedRoute(id: string): void {
+  setSelectedRoute(id: number): void {
     console.log(`Selected route: ${id}`);
     this._selectedRouteId.set(id);
   }
 
-  getShapeByRouteId(routeId: string): Observable<any> {
+  getShapeByRouteId(routeId: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/api/routes/${routeId}/shape`);
   }
 }

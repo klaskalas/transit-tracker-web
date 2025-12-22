@@ -18,7 +18,7 @@ type RegisterPayload = {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly baseUrl = 'http://localhost:5134/api/auth';
+  private readonly baseUrl = 'https://localhost:7233/api/auth';
   private readonly tokenKey = 'transit_tracker_token';
   private readonly userKey = 'transit_tracker_user';
   private readonly userSubject = new BehaviorSubject<AuthUser | null>(this.getStoredUser());
@@ -70,4 +70,6 @@ export class AuthService {
       return null;
     }
   }
+
+  
 }

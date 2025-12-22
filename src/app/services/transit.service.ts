@@ -1,49 +1,123 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { TransitLine, FilterOptions } from '../models/transit.model';
 import { Achievement } from '../models/achievement.model';
-import {UserStats} from '../models/user-stats.model';
-import {HttpClient} from '@angular/common/http';
+import { UserStats } from '../models/user-stats.model';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from './auth.service';
+import { achievementRules, AchievementRule } from '../data/achievement-rules';
+import { RouteType } from '../models/enums';
+import { UserAchievement } from '../models/user-achievement.model';
+
+type VisitResponse = {
+  routeId: number;
+  completed: boolean;
+  completedDate?: string | null;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransitService {
   private transitLinesSubject = new BehaviorSubject<TransitLine[]>([]);
-  private achievementsSubject = new BehaviorSubject<Achievement[]>(this.getMockAchievements());
-  private userStatsSubject = new BehaviorSubject<UserStats>(this.getMockUserStats());
+  private achievementsSubject = new BehaviorSubject<Achievement[]>([]);
+  private userStatsSubject = new BehaviorSubject<UserStats>(this.getEmptyUserStats());
+  private persistedUnlocks = new Map<string, Date>();
 
   transitLines$ = this.transitLinesSubject.asObservable();
   achievements$ = this.achievementsSubject.asObservable();
   userStats$ = this.userStatsSubject.asObservable();
 
-  private baseUrl = 'http://localhost:5134';
+  private baseUrl = 'https://localhost:7233';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
+    this.authService.user$.subscribe(() => this.loadInitialData());
     this.loadInitialData();
   }
 
   private loadInitialData() {
-    this.getTransitLines().subscribe(lines => {
+    this.loadUnlockedAchievements();
+
+    const source$ = this.authService.getToken()
+      ? this.getTransitLinesWithProgress()
+      : this.getTransitLines();
+
+    source$.subscribe(lines => {
       this.transitLinesSubject.next(lines);
+      this.updateUserStats();
     });
   }
 
   getTransitLines(): Observable<TransitLine[]> {
-    return this.http.get<TransitLine[]>(`${this.baseUrl}/api/routes`);
+    return this.http.get<TransitLine[]>(`${this.baseUrl}/api/routes`).pipe(
+      map(lines => lines.map(line => ({
+        ...line,
+        completed: line.completed ?? false,
+        completedDate: line.completedDate ? new Date(line.completedDate) : undefined
+      })))
+    );
+  }
+
+  getTransitLinesWithProgress(): Observable<TransitLine[]> {
+    return this.http.get<TransitLine[]>(`${this.baseUrl}/api/routes/with-progress`).pipe(
+      map(lines => lines.map(line => ({
+        ...line,
+        completed: line.completed ?? false,
+        completedDate: line.completedDate ? new Date(line.completedDate) : undefined
+      })))
+    );
   }
 
   getFilteredTransitLines(filters: FilterOptions): Observable<TransitLine[]> {
-    return this.http.get<TransitLine[]>(`${this.baseUrl}/api/routes`, {
-      params: {
-        types: filters.types.join(','),
-        regions: filters.regions.join(','),
-        completionStatus: filters.completionStatus
-      }
-    });
+    return this.transitLines$.pipe(
+      map(lines => lines.filter(line => {
+        const matchesType = !filters.types.length || filters.types.includes(line.routeType);
+        const matchesRegion = !filters.regions.length || filters.regions.includes(line.region);
+        const matchesCompletion =
+          filters.completionStatus === 'all' ||
+          (filters.completionStatus === 'completed' && line.completed) ||
+          (filters.completionStatus === 'incomplete' && !line.completed);
+        return matchesType && matchesRegion && matchesCompletion;
+      }))
+    );
   }
 
-  toggleLineCompletion(lineId: string): void {
+  toggleLineCompletion(lineId: number): void {
+    if (this.authService.getToken()) {
+      const lines = this.transitLinesSubject.value;
+      const lineIndex = lines.findIndex(line => line.id === lineId);
+      if (lineIndex !== -1) {
+        lines[lineIndex].completed = !lines[lineIndex].completed;
+        lines[lineIndex].completedDate = lines[lineIndex].completed ? new Date() : undefined;
+        this.transitLinesSubject.next([...lines]);
+        this.updateUserStats();
+      }
+
+      this.http.post<VisitResponse>(`${this.baseUrl}/api/routes/${lineId}/visited`, {}).subscribe({
+        next: response => {
+          const updatedLines = this.transitLinesSubject.value;
+          const responseIndex = updatedLines.findIndex(line => line.id === response.routeId);
+          if (responseIndex !== -1) {
+            updatedLines[responseIndex].completed = response.completed;
+            updatedLines[responseIndex].completedDate = response.completedDate ? new Date(response.completedDate) : undefined;
+            this.transitLinesSubject.next([...updatedLines]);
+            this.updateUserStats();
+          }
+        },
+        error: () => {
+          const revertedLines = this.transitLinesSubject.value;
+          const revertIndex = revertedLines.findIndex(line => line.id === lineId);
+          if (revertIndex !== -1) {
+            revertedLines[revertIndex].completed = !revertedLines[revertIndex].completed;
+            revertedLines[revertIndex].completedDate = revertedLines[revertIndex].completed ? new Date() : undefined;
+            this.transitLinesSubject.next([...revertedLines]);
+            this.updateUserStats();
+          }
+        }
+      });
+      return;
+    }
+
     const lines = this.transitLinesSubject.value;
     const lineIndex = lines.findIndex(line => line.id === lineId);
 
@@ -53,58 +127,18 @@ export class TransitService {
 
       this.transitLinesSubject.next([...lines]);
       this.updateUserStats();
-      this.checkAchievements();
     }
   }
 
-  private getMockAchievements(): Achievement[] {
-    return [
-      {
-        id: '1',
-        title: 'First Ride',
-        description: 'Complete your first transit line',
-        icon: 'star',
-        category: 'milestone',
-        requirement: 1,
-        progress: 2,
-        unlocked: true,
-        unlockedDate: new Date('2024-01-15'),
-        points: 50
-      },
-      {
-        id: '2',
-        title: 'Stockholm Explorer',
-        description: 'Complete 10 lines in Stockholm',
-        icon: 'map',
-        category: 'regional',
-        requirement: 10,
-        progress: 2,
-        unlocked: false,
-        points: 200
-      },
-      {
-        id: '3',
-        title: 'Metro Master',
-        description: 'Complete all metro lines',
-        icon: 'train',
-        category: 'type',
-        requirement: 5,
-        progress: 1,
-        unlocked: false,
-        points: 300
-      }
-    ];
-  }
-
-  private getMockUserStats(): UserStats {
+  private getEmptyUserStats(): UserStats {
     return {
-      totalLines: 4,
-      completedLines: 2,
-      totalPoints: 225,
+      totalLines: 0,
+      completedLines: 0,
+      totalPoints: 0,
       level: 1,
-      achievements: this.getMockAchievements(),
-      streakDays: 7,
-      favoriteRegion: 'Stockholm'
+      achievements: [],
+      streakDays: 0,
+      favoriteRegion: 'N/A'
     };
   }
 
@@ -113,51 +147,229 @@ export class TransitService {
     const completedLines = lines.filter(line => line.completed);
     const totalPoints = completedLines.reduce((sum, line) => sum + line.points, 0);
     const level = Math.floor(totalPoints / 1000) + 1;
+    const achievements = this.computeAchievements(lines);
 
     const stats: UserStats = {
       totalLines: lines.length,
       completedLines: completedLines.length,
       totalPoints,
       level,
-      achievements: this.achievementsSubject.value,
-      streakDays: 7,
-      favoriteRegion: 'Stockholm'
+      achievements,
+      streakDays: this.getMaxStreakDays(completedLines),
+      favoriteRegion: this.getTopRegion(completedLines)
     };
 
+    this.achievementsSubject.next(achievements);
     this.userStatsSubject.next(stats);
+    this.persistUnlockedAchievements(achievements);
   }
 
-  private checkAchievements(): void {
-    const achievements = this.achievementsSubject.value;
-    const lines = this.transitLinesSubject.value;
+  private computeAchievements(lines: TransitLine[]): Achievement[] {
     const completedLines = lines.filter(line => line.completed);
+    const previous = this.achievementsSubject.value;
+    const stats = this.buildAchievementStats(completedLines);
 
-    achievements.forEach(achievement => {
-      if (!achievement.unlocked) {
-        let progress = 0;
+    return achievementRules.map(rule => {
+      const progress = this.getRuleProgress(rule, stats);
+      const existing = previous.find(item => item.id === rule.id);
+      const persistedUnlock = this.persistedUnlocks.get(rule.id);
+      const unlocked = progress >= rule.requirement || existing?.unlocked || !!persistedUnlock;
+      const unlockedDate = unlocked
+        ? (persistedUnlock ?? existing?.unlockedDate ?? new Date())
+        : undefined;
 
-        switch (achievement.category) {
-          case 'milestone':
-            progress = completedLines.length;
-            break;
-          case 'regional':
-            const regionLines = completedLines.filter(line =>
-              line.region === achievement.description.split(' ')[0]
-            );
-            progress = regionLines.length;
-            break;
-          case 'type':
-            break;
-        }
+      return {
+        id: rule.id,
+        title: rule.title,
+        description: rule.description,
+        icon: rule.icon,
+        category: rule.category,
+        requirement: rule.requirement,
+        progress,
+        unlocked,
+        unlockedDate,
+        points: rule.points
+      };
+    });
+  }
 
-        achievement.progress = progress;
-        if (progress >= achievement.requirement) {
-          achievement.unlocked = true;
-          achievement.unlockedDate = new Date();
-        }
+  private loadUnlockedAchievements(): void {
+    if (!this.authService.getToken()) {
+      this.persistedUnlocks.clear();
+      return;
+    }
+
+    this.http.get<UserAchievement[]>(`${this.baseUrl}/api/achievements/unlocked`).subscribe({
+      next: unlocks => {
+        this.persistedUnlocks.clear();
+        unlocks.forEach(item => {
+          this.persistedUnlocks.set(item.achievementId, new Date(item.unlockedAt));
+        });
+        this.updateUserStats();
       }
     });
+  }
 
-    this.achievementsSubject.next([...achievements]);
+  private persistUnlockedAchievements(achievements: Achievement[]): void {
+    if (!this.authService.getToken()) {
+      return;
+    }
+
+    const newlyUnlocked = achievements.filter(achievement =>
+      achievement.unlocked && !this.persistedUnlocks.has(achievement.id)
+    );
+
+    if (!newlyUnlocked.length) {
+      return;
+    }
+
+    newlyUnlocked.forEach(achievement => {
+      this.persistedUnlocks.set(achievement.id, achievement.unlockedDate ?? new Date());
+    });
+
+    this.http.post(`${this.baseUrl}/api/achievements/unlocked`, {
+      achievementIds: newlyUnlocked.map(achievement => achievement.id)
+    }).subscribe();
+  }
+
+  private buildAchievementStats(lines: TransitLine[]) {
+    const distinctCities = new Set(lines.map(line => line.region).filter(Boolean));
+    const distinctCountries = new Set(lines.map(line => line.agency?.countryCode).filter(Boolean));
+    const metroCount = lines.filter(line => this.isMetro(line.routeType)).length;
+    const busCount = lines.filter(line => this.isBus(line.routeType)).length;
+    const tramCount = lines.filter(line => this.isTram(line.routeType)).length;
+    const trainCount = lines.filter(line => this.isTrain(line.routeType)).length;
+    const weekendCount = lines.filter(line => this.isWeekend(line.completedDate)).length;
+    const maxLinesInDay = this.getMaxLinesInDay(lines);
+    const maxStreakDays = this.getMaxStreakDays(lines);
+    const uniqueTypeCount = [metroCount, busCount, tramCount, trainCount].filter(count => count > 0).length;
+
+    return {
+      totalLines: lines.length,
+      distinctCities: distinctCities.size,
+      distinctCountries: distinctCountries.size,
+      metroCount,
+      busCount,
+      tramCount,
+      trainCount,
+      weekendCount,
+      maxLinesInDay,
+      maxStreakDays,
+      uniqueTypeCount
+    };
+  }
+
+  private getRuleProgress(rule: AchievementRule, stats: ReturnType<typeof this.buildAchievementStats>): number {
+    switch (rule.ruleType) {
+      case 'count_lines':
+        return stats.totalLines;
+      case 'distinct_cities':
+        return stats.distinctCities;
+      case 'distinct_countries':
+        return stats.distinctCountries;
+      case 'count_metro':
+        return stats.metroCount;
+      case 'lines_in_day':
+        return stats.maxLinesInDay;
+      case 'weekend_lines':
+        return stats.weekendCount;
+      case 'streak_days':
+        return stats.maxStreakDays;
+      case 'all_types':
+        return stats.uniqueTypeCount;
+      default:
+        return 0;
+    }
+  }
+
+  private getMaxLinesInDay(lines: TransitLine[]): number {
+    const counts = new Map<string, number>();
+    lines.forEach(line => {
+      if (!line.completedDate) {
+        return;
+      }
+      const key = this.getDateKey(line.completedDate);
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    });
+    return Math.max(0, ...counts.values());
+  }
+
+  private getMaxStreakDays(lines: TransitLine[]): number {
+    const dates = Array.from(new Set(
+      lines
+        .map(line => line.completedDate)
+        .filter(Boolean)
+        .map(date => this.getDateKey(date as Date))
+    )).sort();
+
+    let max = 0;
+    let current = 0;
+    let previousDate: Date | null = null;
+
+    dates.forEach(dateKey => {
+      const date = new Date(`${dateKey}T00:00:00`);
+      if (previousDate) {
+        const diff = (date.getTime() - previousDate.getTime()) / 86400000;
+        current = diff === 1 ? current + 1 : 1;
+      } else {
+        current = 1;
+      }
+      if (current > max) {
+        max = current;
+      }
+      previousDate = date;
+    });
+
+    return max;
+  }
+
+  private getTopRegion(lines: TransitLine[]): string {
+    const counts = new Map<string, number>();
+    lines.forEach(line => {
+      if (!line.region) {
+        return;
+      }
+      counts.set(line.region, (counts.get(line.region) ?? 0) + 1);
+    });
+    let topRegion = 'N/A';
+    let topCount = 0;
+    counts.forEach((count, region) => {
+      if (count > topCount) {
+        topCount = count;
+        topRegion = region;
+      }
+    });
+    return topRegion;
+  }
+
+  private getDateKey(date: Date): string {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private isWeekend(date?: Date): boolean {
+    if (!date) {
+      return false;
+    }
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  }
+
+  private isMetro(type: RouteType): boolean {
+    return (type >= 400 && type <= 499) || type === RouteType.Metro || type === RouteType.Underground;
+  }
+
+  private isBus(type: RouteType): boolean {
+    return type >= 700 && type <= 799;
+  }
+
+  private isTram(type: RouteType): boolean {
+    return type >= 900 && type <= 999;
+  }
+
+  private isTrain(type: RouteType): boolean {
+    return type >= 100 && type <= 199;
   }
 }
