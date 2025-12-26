@@ -5,6 +5,7 @@ import {ProgressComponent} from './components/progress/progress.component';
 import {AchievementsComponent} from './components/achievements/achievements.component';
 import {ProfileComponent} from './components/profile/profile.component';
 import {AuthComponent} from './components/auth/auth.component';
+import {authGuard} from './services/auth.guard';
 
 export const routes: Routes = [
   {
@@ -15,18 +16,22 @@ export const routes: Routes = [
   {
     path: 'map',
     component: MapComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'progress',
     component: ProgressComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'achievements',
     component: AchievementsComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'login',
@@ -35,5 +40,6 @@ export const routes: Routes = [
   {
     path: 'routes/:shapeId',
     component: RouteViewerComponent,
+    canActivate: [authGuard],
   }
 ];

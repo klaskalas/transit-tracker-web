@@ -46,7 +46,12 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    const token = localStorage.getItem(this.tokenKey);
+    if (!token || !this.isTokenValid(token)) {
+      this.clearStoredAuth();
+      return null;
+    }
+    return token;
   }
 
   getCurrentUser(): AuthUser | null {
@@ -71,5 +76,30 @@ export class AuthService {
     }
   }
 
-  
+  private isTokenValid(token: string): boolean {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return false;
+    }
+    try {
+      const payload = JSON.parse(atob(this.padBase64(parts[1])));
+      if (!payload?.exp) {
+        return false;
+      }
+      return payload.exp * 1000 > Date.now();
+    } catch {
+      return false;
+    }
+  }
+
+  private padBase64(value: string): string {
+    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+    return normalized.padEnd(normalized.length + (4 - (normalized.length % 4)) % 4, '=');
+  }
+
+  private clearStoredAuth(): void {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+    this.userSubject.next(null);
+  }
 }
