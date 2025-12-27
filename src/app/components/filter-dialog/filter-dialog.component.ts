@@ -2,10 +2,7 @@ import {Component, inject} from '@angular/core';
 import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {FilterOptions} from '../../models/transit.model';
 import {Checkbox} from 'primeng/checkbox';
-import {Select} from 'primeng/select';
-import {ButtonDirective} from 'primeng/button';
 import {FormsModule} from '@angular/forms';
-import {Divider} from 'primeng/divider';
 import {CommonModule} from '@angular/common';
 import {RouteType} from '../../models/enums';
 
@@ -17,10 +14,7 @@ import {RouteType} from '../../models/enums';
   imports: [
     CommonModule,
     Checkbox,
-    Select,
-    ButtonDirective,
-    FormsModule,
-    Divider
+    FormsModule
   ],
   providers: [DialogService]
 })
@@ -36,7 +30,7 @@ export class FilterDialogComponent {
 
   regions: string[] = ['Stockholm', 'Tokyo', 'London', 'New York', 'Paris'];
 
-  completionOptions = [
+  completionOptions: { value: FilterOptions['completionStatus']; label: string }[] = [
     { value: 'all', label: 'All Lines' },
     { value: 'completed', label: 'Completed Only' },
     { value: 'incomplete', label: 'Incomplete Only' }
@@ -46,7 +40,12 @@ export class FilterDialogComponent {
   dialogRef = inject(DynamicDialogRef);
 
   constructor() {
-    this.filters = this.config.data;
+    const incoming = this.config.data?.filters as FilterOptions | undefined;
+    this.filters = {
+      types: incoming?.types ?? [],
+      regions: incoming?.regions ?? [],
+      completionStatus: incoming?.completionStatus ?? 'all'
+    };
   }
 
   onTypeChange(type: RouteType, checked: boolean): void {
@@ -70,11 +69,11 @@ export class FilterDialogComponent {
   }
 
   isTypeSelected(type: RouteType): boolean {
-    return this.filters.types.includes(type);
+    return this.filters.types?.includes(type) ?? false;
   }
 
   isRegionSelected(region: string): boolean {
-    return this.filters.regions.includes(region);
+    return this.filters.regions?.includes(region) ?? false;
   }
 
   clearFilters(): void {

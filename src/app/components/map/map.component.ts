@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { FilterDialogComponent } from '../filter-dialog/filter-dialog.component';
 import {RouteViewerComponent} from './route-viewer/route-viewer';
 import {TransitLineCardComponent} from './transit-line-card/transit-line-card.component';
-import {AsyncPipe, CommonModule} from '@angular/common';
+import {AsyncPipe, CommonModule, DOCUMENT} from '@angular/common';
 import {FilterOptions, TransitLine} from '../../models/transit.model';
 import {RouteType} from '../../models/enums';
 import {TransitService} from '../../services/transit.service';
 import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {SearchFilterPanelComponent} from './search-filter-panel/search-filter-panel.component';
+import {RouteService} from '../../services/route-service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -23,7 +25,7 @@ import {SearchFilterPanelComponent} from './search-filter-panel/search-filter-pa
   styleUrls: ['./map.component.scss'],
   providers: [DialogService]
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
   transitLines$: Observable<TransitLine[]>;
   currentFilters: FilterOptions = {
     types: [],
@@ -32,44 +34,45 @@ export class MapComponent implements OnInit {
   };
   dialogRef: DynamicDialogRef | undefined;
   searchTerm = '';
-  selectedCity = 'all';
   selectedType = 'all';
-  viewMode: 'grid' | 'list' = 'grid';
-  collectionStatus: 'all' | 'collected' | 'notCollected' = 'all';
-  cityOptions = [
-    { label: 'All Cities', value: 'all' },
-    { label: 'Stockholm', value: 'stockholm' },
-    { label: 'London', value: 'london' },
-    { label: 'Tokyo', value: 'tokyo' },
-  ];
+  viewMode: 'map' | 'explore' = 'explore';
+  isListExpanded = false;
+  isNavHidden = false;
+  selectedLine: TransitLine | null = null;
   typeOptions = [
-    { label: 'All Types', value: 'all' },
     { label: 'Metro', value: 'metro' },
     { label: 'Bus', value: 'bus' },
     { label: 'Tram', value: 'tram' },
     { label: 'Train', value: 'train' },
   ];
-  collectionOptions = [
-    { label: 'All', value: 'all' },
-    { label: 'Collected', value: 'collected' },
-    { label: 'Not Collected', value: 'notCollected' },
-  ];
 
   constructor(
     private transitService: TransitService,
-    public dialog: DialogService
+    public dialog: DialogService,
+    private routeService: RouteService,
+    private router: Router,
+    private renderer: Renderer2,
+    @Inject(DOCUMENT) private document: Document
   ) {
     this.transitLines$ = this.transitService.transitLines$;
   }
 
   ngOnInit(): void {
+    this.renderer.addClass(this.document.body, 'map-mode');
     this.applyFilters();
+  }
+
+  ngOnDestroy(): void {
+    this.renderer.removeClass(this.document.body, 'map-mode');
+    this.renderer.removeClass(this.document.body, 'nav-hidden');
   }
 
   openFilterDialog(): void {
     const dialogRef = this.dialog.open(FilterDialogComponent, {
-      header: 'Filter Transit Lines',
-      width: '350px',
+      header: '',
+      styleClass: 'alltrails-filter',
+      showHeader: false,
+      width: '420px',
       data: { filters: { ...this.currentFilters } }
     });
 
@@ -82,23 +85,20 @@ export class MapComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const typeFilters = this.getTypeFilters(this.selectedType);
-    const completionStatus = this.getCompletionStatus(this.collectionStatus);
+    const typeFilters = this.getQuickTypeFilters();
 
     this.currentFilters = {
-      types: typeFilters,
-      regions: [],
-      completionStatus
+      types: typeFilters.length ? typeFilters : this.currentFilters.types,
+      regions: this.currentFilters.regions,
+      completionStatus: this.currentFilters.completionStatus
     };
 
     const searchTerm = this.searchTerm.trim().toLowerCase();
-    const selectedCity = this.selectedCity.toLowerCase();
 
     this.transitLines$ = this.transitService.getFilteredTransitLines(this.currentFilters).pipe(
       map(lines => lines.filter(line => {
         const matchesSearch = !searchTerm || this.matchesSearch(line, searchTerm);
-        const matchesCity = selectedCity === 'all' || this.matchesCity(line, selectedCity);
-        return matchesSearch && matchesCity;
+        return matchesSearch;
       }))
     );
   }
@@ -107,22 +107,43 @@ export class MapComponent implements OnInit {
     this.transitService.toggleLineCompletion(lineId);
   }
 
-  setViewMode(mode: 'grid' | 'list'): void {
+  onLineSelected(line: TransitLine): void {
+    if (this.viewMode === 'map') {
+      this.selectedLine = line;
+      this.routeService.setSelectedRoute(line.id);
+      return;
+    }
+    this.router.navigate(['lines', line.id]);
+  }
+
+  clearSelectedLine(): void {
+    this.selectedLine = null;
+    this.routeService.clearSelectedRoute();
+  }
+
+  setViewMode(mode: 'map' | 'explore'): void {
     this.viewMode = mode;
+    if (mode === 'explore') {
+      this.selectedLine = null;
+      this.routeService.clearSelectedRoute();
+    }
   }
 
-  private getCompletionStatus(status: 'all' | 'collected' | 'notCollected'): 'all' | 'completed' | 'incomplete' {
-    if (status === 'collected') {
-      return 'completed';
-    }
-    if (status === 'notCollected') {
-      return 'incomplete';
-    }
-    return 'all';
+  toggleListExpanded(): void {
+    this.isListExpanded = !this.isListExpanded;
   }
 
-  private getTypeFilters(selectedType: string): RouteType[] {
-    switch (selectedType) {
+  toggleNavVisibility(): void {
+    this.isNavHidden = !this.isNavHidden;
+    if (this.isNavHidden) {
+      this.renderer.addClass(this.document.body, 'nav-hidden');
+    } else {
+      this.renderer.removeClass(this.document.body, 'nav-hidden');
+    }
+  }
+
+  private getQuickTypeFilters(): RouteType[] {
+    switch (this.selectedType) {
       case 'metro':
         return [RouteType.Metro, RouteType.Underground, RouteType.UrbanRailway];
       case 'bus':
@@ -152,13 +173,5 @@ export class MapComponent implements OnInit {
     return haystack.includes(searchTerm);
   }
 
-  private matchesCity(line: TransitLine, selectedCity: string): boolean {
-    if (!selectedCity || selectedCity === 'all') {
-      return true;
-    }
-
-    const regionValue = (line.region || '').toLowerCase();
-    const agencyName = (line.agency?.name || '').toLowerCase();
-    return regionValue.includes(selectedCity) || agencyName.includes(selectedCity);
-  }
+  // City/region filtering is handled in the filter dialog.
 }

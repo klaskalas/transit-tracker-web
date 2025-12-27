@@ -1,22 +1,50 @@
 <div class="map-container">
-  <div class="map-content">
+  <div class="map-screen" [class.is-hidden]="viewMode === 'explore'">
     <app-route-viewer></app-route-viewer>
 
-    <div class="lines-panel">
+    <div class="map-overlay">
       <app-search-filter-panel
         [(searchTerm)]="searchTerm"
         (searchTermChange)="applyFilters()"
-        [(selectedCity)]="selectedCity"
-        (selectedCityChange)="applyFilters()"
         [(selectedType)]="selectedType"
         (selectedTypeChange)="applyFilters()"
-        [(collectionStatus)]="collectionStatus"
-        (collectionStatusChange)="applyFilters()"
-        [(viewMode)]="viewMode"
-        [cityOptions]="cityOptions"
-        [typeOptions]="typeOptions"
-        [collectionOptions]="collectionOptions">
+        (filterClick)="openFilterDialog()"
+        [typeOptions]="typeOptions">
       </app-search-filter-panel>
+
+      @if (selectedLine) {
+        <div class="selected-route-card">
+          <div class="selected-route-content">
+            <div class="selected-route-title">
+              <span>{{ selectedLine.longName || ('Line ' + selectedLine.shortName) }}</span>
+              <button type="button" class="selected-close" (click)="clearSelectedLine()">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+            <div class="selected-route-meta">
+              <span>{{ selectedLine.region || selectedLine.agency?.name }}</span>
+              <span>•</span>
+              <span>{{ selectedLine.agency?.countryCode }}</span>
+            </div>
+          </div>
+          <button type="button" class="selected-route-cta" (click)="toggleListExpanded()">
+            View details
+            <i class="pi pi-arrow-right"></i>
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="lines-sheet" [class.expanded]="isListExpanded">
+      <button type="button" class="sheet-handle" (click)="toggleListExpanded()">
+        <span class="grabber"></span>
+        @if (transitLines$ | async; as lines) {
+          <span class="sheet-count">{{ lines.length }} lines</span>
+        } @else {
+          <span class="sheet-count">Loading...</span>
+        }
+        <span class="sheet-action">{{ isListExpanded ? 'Hide list' : 'Show list' }}</span>
+      </button>
 
       @if (transitLines$ | async; as lines) {
         @if (lines.length === 0) {
@@ -28,17 +56,59 @@
         } @else {
           <div
             class="lines-list"
-            [ngClass]="{ 'list-mode': viewMode === 'list', 'grid-mode': viewMode === 'grid' }">
+            [ngClass]="{ 'list-mode': true }">
             @for(line of lines; track line.id) {
               <app-transit-line-card
                 [line]="line"
-                [viewMode]="viewMode"
-                (toggleCompletion)="onLineToggle($event)">
+                (toggleCompletion)="onLineToggle($event)"
+                (selectLine)="onLineSelected($event)">
               </app-transit-line-card>
             }
           </div>
         }
       }
     </div>
+
+    <button type="button" class="nav-toggle" (click)="toggleNavVisibility()">
+      <i class="pi" [ngClass]="isNavHidden ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+    </button>
   </div>
+
+  <div class="list-screen" [class.is-visible]="viewMode === 'explore'">
+    <div class="list-header">
+      <app-search-filter-panel
+        [(searchTerm)]="searchTerm"
+        (searchTermChange)="applyFilters()"
+        [(selectedType)]="selectedType"
+        (selectedTypeChange)="applyFilters()"
+        (filterClick)="openFilterDialog()"
+        [typeOptions]="typeOptions">
+      </app-search-filter-panel>
+    </div>
+
+    @if (transitLines$ | async; as lines) {
+      @if (lines.length === 0) {
+        <div class="lines-empty">
+          <i class="pi pi-search"></i>
+          <h4>No matches</h4>
+          <p>Try adjusting your filters or search terms.</p>
+        </div>
+      } @else {
+        <div class="lines-list list-mode">
+          @for(line of lines; track line.id) {
+            <app-transit-line-card
+              [line]="line"
+              (toggleCompletion)="onLineToggle($event)"
+              (selectLine)="onLineSelected($event)">
+            </app-transit-line-card>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <button type="button" class="mode-toggle" (click)="setViewMode(viewMode === 'map' ? 'explore' : 'map')">
+    <i class="pi" [ngClass]="viewMode === 'map' ? 'pi-list' : 'pi-map'"></i>
+    <span>{{ viewMode === 'map' ? 'Explore' : 'Map' }}</span>
+  </button>
 </div>

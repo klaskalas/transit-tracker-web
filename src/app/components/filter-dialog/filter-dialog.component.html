@@ -1,49 +1,65 @@
 <div class="filter-dialog">
+  <header class="filter-header">
+    <button class="back-button" type="button" (click)="cancel()">
+      <i class="pi pi-arrow-left"></i>
+    </button>
+    <span class="filter-title">Filter</span>
+  </header>
 
-  <div class="filter-section">
-    <h3><i class="pi pi-directions"></i> Transport Type</h3>
-    <div class="filter-options">
-      @for (type of transitTypes; track type.value) {
-        <p-checkbox
-          [ngModel]="isTypeSelected(type.value)"
-          (onChange)="onTypeChange(type.value, $event.checked)">
-          {{ type.label }}
-        </p-checkbox>
-      }
-    </div>
+  <div class="filter-body">
+    <section class="filter-section">
+      <h3>Transport Type</h3>
+      <div class="chip-row">
+        @for (type of transitTypes; track type.value) {
+          <button
+            type="button"
+            class="chip"
+            [class.active]="isTypeSelected(type.value)"
+            (click)="onTypeChange(type.value, !isTypeSelected(type.value))">
+            {{ type.label }}
+          </button>
+        }
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="filter-section">
+      <h3>Region</h3>
+      <div class="option-list">
+        @for (region of regions; track region) {
+          <label class="option-row">
+            <span>{{ region }}</span>
+            <p-checkbox
+              [ngModel]="isRegionSelected(region)"
+              (onChange)="onRegionChange(region, $event.checked)">
+            </p-checkbox>
+          </label>
+        }
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="filter-section">
+      <h3>Completion Status</h3>
+      <div class="option-list">
+        @for (option of completionOptions; track option.value) {
+          <button
+            type="button"
+            class="option-button"
+            [class.active]="filters.completionStatus === option.value"
+            (click)="filters.completionStatus = option.value">
+            <span>{{ option.label }}</span>
+            <i class="pi" [ngClass]="filters.completionStatus === option.value ? 'pi-check-circle' : 'pi-circle'"></i>
+          </button>
+        }
+      </div>
+    </section>
   </div>
 
-  <p-divider />
-
-  <div class="filter-section">
-    <h3><i class="pi pi-globe"></i> Region</h3>
-    <div class="filter-options">
-      @for (region of regions; track region) {
-        <p-checkbox
-          [ngModel]="isRegionSelected(region)"
-          (onChange)="onRegionChange(region, $event.checked)">
-          {{ region }}
-        </p-checkbox>
-      }
-    </div>
-  </div>
-
-  <p-divider />
-
-  <div class="filter-section">
-    <h3><i class="pi pi-check-square"></i> Completion Status</h3>
-    <div class="completion-select">
-      <p-select [(ngModel)]="filters.completionStatus"
-                [options]="completionOptions"
-                optionLabel="label"
-                variant="outlined" />
-    </div>
-  </div>
-
-  <div class="filter-actions">
-    <button pButton (click)="cancel()">Cancel</button>
-    <button pButton (click)="clearFilters()">Clear All</button>
-    <button pButton raised severity="primary" (click)="applyFilters()">Apply Filters</button>
-  </div>
-
+  <footer class="filter-actions">
+    <button class="ghost" type="button" (click)="clearFilters()">Clear</button>
+    <button class="primary" type="button" (click)="applyFilters()">Show Results</button>
+  </footer>
 </div>

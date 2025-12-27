@@ -25,7 +25,7 @@ export class AuthComponent implements OnInit {
   displayName = '';
   message = '';
   isLoading = false;
-  private returnUrl = '/map';
+  private returnUrl = '/explore';
 
   constructor(
     private authService: AuthService,

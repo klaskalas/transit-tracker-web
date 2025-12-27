@@ -1,4 +1,4 @@
-import {Component, effect, inject, OnInit} from '@angular/core';
+import {Component, effect, inject, Input, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteService } from '../../../services/route-service';
 import {GeoJSONSourceComponent, LayerComponent, MapComponent} from 'ngx-mapbox-gl';
@@ -10,6 +10,7 @@ import {FeatureCollection} from 'geojson';
   standalone: true,
   imports: [CommonModule, GeoJSONSourceComponent, LayerComponent, MapComponent, LayerComponent],
   templateUrl: './route-viewer.html',
+  styleUrls: ['./route-viewer.scss'],
 })
 export class RouteViewerComponent implements OnInit {
   private routeService = inject(RouteService);
@@ -17,18 +18,14 @@ export class RouteViewerComponent implements OnInit {
   geoJson: FeatureCollection;
   readonly routeId = this.routeService.selectedRouteId;
   map: mapboxgl.Map;
+  @Input() interactive = true;
 
   constructor() {
     effect(() => {
       const routeId = this.routeId();
       if (!routeId || !this.map) return;
 
-      if (routeId) {
-        this.routeService.getShapeByRouteId(routeId).subscribe(geoJson => {
-          this.geoJson = geoJson;
-          this.fitMapToLineStringCoordinates(geoJson);
-        });
-      }
+      this.loadRouteShape(routeId);
     });
   }
 
@@ -43,6 +40,19 @@ export class RouteViewerComponent implements OnInit {
 
   onMapCreate(map: mapboxgl.Map) {
     this.map = map;
+    if (!this.interactive) {
+      map.scrollZoom.disable();
+      map.boxZoom.disable();
+      map.dragRotate.disable();
+      map.dragPan.disable();
+      map.keyboard.disable();
+      map.doubleClickZoom.disable();
+      map.touchZoomRotate.disable();
+    }
+    const routeId = this.routeId();
+    if (routeId) {
+      this.loadRouteShape(routeId);
+    }
   }
 
   private fitMapToLineStringCoordinates(geoJson: FeatureCollection): void {
@@ -69,4 +79,10 @@ export class RouteViewerComponent implements OnInit {
     this.map.fitBounds(bounds, { padding: 40 });
   }
 
+  private loadRouteShape(routeId: number): void {
+    this.routeService.getShapeByRouteId(routeId).subscribe(geoJson => {
+      this.geoJson = geoJson;
+      this.fitMapToLineStringCoordinates(geoJson);
+    });
+  }
 }

@@ -1,51 +1,167 @@
 .filter-dialog {
-  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  color: #0f172a;
+  background: #ffffff;
+  font-family: "Outfit", "Segoe UI", sans-serif;
+}
 
-  h2 {
-    margin: 0 0 20px 0;
-    color: #333;
-    font-weight: 600;
-  }
+.filter-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 12px;
+}
 
-  .filter-section {
-    margin: 20px 0;
+.back-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #f1f5f9;
+  color: #0f172a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
 
-    h3 {
-      margin: 0 0 16px 0;
-      font-size: 16px;
-      font-weight: 500;
-      color: #333;
-    }
+.filter-title {
+  font-size: 18px;
+  font-weight: 600;
+}
 
-    .filter-options {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+.filter-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-      mat-checkbox {
-        ::ng-deep .mat-mdc-checkbox-label {
-          font-size: 14px;
-        }
-      }
-    }
+.filter-section h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 600;
+}
 
-    .completion-select {
-      width: 100%;
-    }
-  }
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
-  mat-divider {
-    margin: 20px 0;
-  }
+.chip {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
-  mat-dialog-actions {
-    padding: 16px 0 0 0;
-    margin: 0;
+.chip.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
+}
 
-    button {
-      margin-left: 8px;
-      text-transform: none;
-      font-weight: 500;
-    }
+.section-divider {
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.option-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.option-button.active {
+  border-color: #0f172a;
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+.filter-actions {
+  padding: 16px 20px calc(20px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+}
+
+.filter-actions .ghost {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-actions .primary {
+  flex: 1;
+  border: none;
+  background: #0f172a;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+:host ::ng-deep .p-dialog.alltrails-filter {
+  margin: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+}
+
+:host ::ng-deep .p-dialog.alltrails-filter .p-dialog-content {
+  padding: 0;
+  background: #ffffff;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  :host ::ng-deep .p-dialog.alltrails-filter {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
   }
 }

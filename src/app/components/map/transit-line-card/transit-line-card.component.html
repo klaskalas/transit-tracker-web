@@ -1,8 +1,18 @@
 <p-card
   class="transit-card"
   [class.completed]="line.completed"
-  [class.list-view]="viewMode === 'list'"
-  (click)="previewLine(line.id)">
+  (click)="previewLine()">
+  <div class="card-thumbnail" [style.background-color]="getLineColor()">
+    <div class="thumb-overlay">
+      <span class="thumb-chip">{{ line.shortName }}</span>
+      <button class="thumb-action" type="button" (click)="$event.stopPropagation()">
+        <i class="pi pi-bookmark"></i>
+      </button>
+    </div>
+    <svg [attr.viewBox]="thumbnailViewBox" aria-hidden="true" class="thumb-path">
+      <path [attr.d]="thumbnailPath || 'M10 70 L60 25 L110 40 L160 22 L190 30'"></path>
+    </svg>
+  </div>
   <div class="card-accent" [style.background-color]="line.color"></div>
   <div class="card-header">
     <div class="line-badge" [style.background-color]="line.color">
@@ -13,21 +23,39 @@
         <span class="line-name">{{ line.longName || 'Line ' + line.shortName }}</span>
         <fa-icon class="type-icon" [icon]="getPrimeTypeIcon(line.routeType)"></fa-icon>
       </div>
-      <div class="line-location">
-        <i class="pi pi-map-marker"></i>
-        <span>{{ line.region }}, {{ line.agency.countryCode }}</span>
+      <div class="line-meta">
+        <span class="meta-pill">
+          <i class="pi pi-map-marker"></i>
+          {{ line.region || line.agency?.name }}
+        </span>
+        <span class="meta-pill">
+          {{ line.agency?.countryCode }}
+        </span>
+        <span class="meta-pill">
+          {{ getTypeLabel(line.routeType) }}
+        </span>
       </div>
     </div>
+    @if (line.completed) {
+      <div class="status-pill">
+        <i class="pi pi-check"></i>
+        Visited
+      </div>
+    }
   </div>
 
   <div class="line-stats">
     <div class="stat-item">
       <i class="pi pi-sitemap"></i>
-      <span>{{ getStationCount(line.points) }} stations</span>
+      <span>{{ getStopCount(line.points, line.stopCount) }} stops</span>
     </div>
     <div class="stat-item">
       <i class="pi pi-compass"></i>
       <span>{{ getDistance(line.points) }} km</span>
+    </div>
+    <div class="stat-item">
+      <i class="pi pi-bolt"></i>
+      <span>{{ line.gtfsRouteId }}</span>
     </div>
   </div>
 
@@ -36,17 +64,13 @@
       pButton
       [outlined]="line.completed"
       [severity]="line.completed ? 'secondary' : 'primary'"
-      [icon]="line.completed ? 'pi pi-check' : (viewMode === 'list' ? null : 'pi pi-plus')"
+      [icon]="line.completed ? 'pi pi-check' : 'pi pi-plus'"
       [ngClass]="{ 'is-completed': line.completed }"
       (click)="$event.stopPropagation(); onToggleCompletion()"
       class="completion-button"
       type="button"
     >
-      {{
-        line.completed
-          ? (viewMode === 'list' ? 'Visited' : 'Visited')
-          : (viewMode === 'list' ? 'Mark Visited' : 'Mark as Visited')
-      }}
+      {{ line.completed ? 'Visited' : 'Mark as Visited' }}
     </button>
   </div>
 </p-card>

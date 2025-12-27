@@ -13,23 +13,30 @@ import { filter } from 'rxjs/operators';
   ]
 })
 export class BottomNavComponent implements OnInit {
-  protected activeRoute: string = 'map';
+  protected activeRoute: string = 'explore';
 
   constructor(private router: Router) {}
 
   ngOnInit() {
     // Set initial active route based on current URL
-    this.activeRoute = this.router.url.split('/')[1] || 'map';
+    this.activeRoute = this.normalizeRoute(this.router.url.split('/')[1]);
 
     // Subscribe to router events to update active route
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
-      this.activeRoute = event.urlAfterRedirects.split('/')[1] || 'map';
+      this.activeRoute = this.normalizeRoute(event.urlAfterRedirects.split('/')[1]);
     });
   }
 
   protected navigateTo(route: string) {
     this.router.navigate([route]);
+  }
+
+  private normalizeRoute(route: string | undefined): string {
+    if (!route) {
+      return 'explore';
+    }
+    return route === 'lines' ? 'explore' : route;
   }
 }

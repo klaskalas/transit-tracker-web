@@ -5,57 +5,29 @@
       <input
         pInputText
         type="search"
-        placeholder="Search by name, city, or country..."
+        placeholder="Where to next?"
         [ngModel]="searchTerm"
         (ngModelChange)="onSearchTermChange($event)" />
     </span>
-    <div class="view-toggle" role="group" aria-label="View toggle">
-      <button
-        pButton
-        type="button"
-        icon="pi pi-th-large"
-        [outlined]="viewMode !== 'grid'"
-        aria-label="Grid view"
-        (click)="setViewMode('grid')">
-      </button>
-      <button
-        pButton
-        type="button"
-        icon="pi pi-list"
-        [outlined]="viewMode !== 'list'"
-        aria-label="List view"
-        (click)="setViewMode('list')">
-      </button>
-    </div>
+    <button
+      pButton
+      type="button"
+      class="filter-button"
+      icon="pi pi-sliders-h"
+      aria-label="Open filters"
+      (click)="openFilters()">
+    </button>
   </div>
-  <div class="filter-row">
-    <p-select
-      [options]="cityOptions"
-      optionLabel="label"
-      optionValue="value"
-      [ngModel]="selectedCity"
-      (ngModelChange)="onSelectedCityChange($event)"
-      styleClass="select-field"
-      aria-label="City filter">
-    </p-select>
-    <p-select
-      [options]="typeOptions"
-      optionLabel="label"
-      optionValue="value"
-      [ngModel]="selectedType"
-      (ngModelChange)="onSelectedTypeChange($event)"
-      styleClass="select-field"
-      aria-label="Type filter">
-    </p-select>
-    <p-selectButton
-      [options]="collectionOptions"
-      optionLabel="label"
-      optionValue="value"
-      [ngModel]="collectionStatus"
-      (ngModelChange)="onCollectionStatusChange($event)"
-      [allowEmpty]="false"
-      styleClass="segmented-control"
-      aria-label="Collection filter">
-    </p-selectButton>
+  <div class="filter-row scrollable-row">
+    @for(option of typeOptions; track option.value) {
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="selectedType === option.value"
+        (click)="onSelectedTypeChange(selectedType === option.value ? 'all' : option.value)">
+        <fa-icon [icon]="typeIcons[option.value]"></fa-icon>
+        <span>{{ option.label }}</span>
+      </button>
+    }
   </div>
 </div>

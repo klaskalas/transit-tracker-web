@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import {RouteViewerComponent} from './components/map/route-viewer/route-viewer';
 import {MapComponent} from './components/map/map.component';
 import {ProgressComponent} from './components/progress/progress.component';
 import {AchievementsComponent} from './components/achievements/achievements.component';
@@ -10,13 +9,18 @@ import {authGuard} from './services/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'map',
+    redirectTo: 'explore',
     pathMatch: 'full'
   },
   {
-    path: 'map',
+    path: 'explore',
     component: MapComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'map',
+    redirectTo: 'explore',
+    pathMatch: 'full'
   },
   {
     path: 'progress',
@@ -38,8 +42,8 @@ export const routes: Routes = [
     component: AuthComponent,
   },
   {
-    path: 'routes/:shapeId',
-    component: RouteViewerComponent,
+    path: 'lines/:lineId',
+    loadComponent: () => import('./components/map/line-detail/line-detail.component').then(m => m.LineDetailComponent),
     canActivate: [authGuard],
   }
 ];

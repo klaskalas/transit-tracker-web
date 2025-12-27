@@ -9,6 +9,7 @@ export interface TransitLine {
   routeType: RouteType;
   region: string;
   color: string;
+  stopCount?: number;
   completed: boolean;
   completedDate?: Date;
   points: number;
