@@ -26,6 +26,10 @@
           <span class="stat-value">{{ (line.stopCount ?? line.points ?? 0) | number:'1.0-0' }}</span>
         </div>
         <div class="stat">
+          <span class="stat-label">Distance</span>
+          <span class="stat-value">{{ getDistanceKm(line) }} km</span>
+        </div>
+        <div class="stat">
           <span class="stat-label">Route type</span>
           <span class="stat-value">{{ getTypeLabel(line.routeType) }}</span>
         </div>

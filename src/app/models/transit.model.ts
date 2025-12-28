@@ -10,6 +10,7 @@ export interface TransitLine {
   region: string;
   color: string;
   stopCount?: number;
+  longestTripLengthMeters?: number;
   completed: boolean;
   completedDate?: Date;
   points: number;

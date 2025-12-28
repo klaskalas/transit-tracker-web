@@ -2,26 +2,17 @@
   class="transit-card"
   [class.completed]="line.completed"
   (click)="previewLine()">
-  <div class="card-thumbnail" [style.background-color]="getLineColor()">
-    <div class="thumb-overlay">
-      <span class="thumb-chip">{{ line.shortName }}</span>
-      <button class="thumb-action" type="button" (click)="$event.stopPropagation()">
-        <i class="pi pi-bookmark"></i>
-      </button>
-    </div>
-    <svg [attr.viewBox]="thumbnailViewBox" aria-hidden="true" class="thumb-path">
-      <path [attr.d]="thumbnailPath || 'M10 70 L60 25 L110 40 L160 22 L190 30'"></path>
-    </svg>
-  </div>
   <div class="card-accent" [style.background-color]="line.color"></div>
   <div class="card-header">
+    <div class="type-badge" [style.background-color]="line.color">
+      <fa-icon [icon]="getPrimeTypeIcon(line.routeType)"></fa-icon>
+    </div>
     <div class="line-badge" [style.background-color]="line.color">
       {{ line.shortName }}
     </div>
     <div class="line-main">
       <div class="line-title">
         <span class="line-name">{{ line.longName || 'Line ' + line.shortName }}</span>
-        <fa-icon class="type-icon" [icon]="getPrimeTypeIcon(line.routeType)"></fa-icon>
       </div>
       <div class="line-meta">
         <span class="meta-pill">
@@ -51,7 +42,7 @@
     </div>
     <div class="stat-item">
       <i class="pi pi-compass"></i>
-      <span>{{ getDistance(line.points) }} km</span>
+      <span>{{ getDistanceKm(line) }} km</span>
     </div>
     <div class="stat-item">
       <i class="pi pi-bolt"></i>

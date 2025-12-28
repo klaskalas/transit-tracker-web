@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom, map } from 'rxjs';
 import { TransitLine, FilterOptions } from '../models/transit.model';
 import { Achievement } from '../models/achievement.model';
 import { UserStats } from '../models/user-stats.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { achievementRules, AchievementRule } from '../data/achievement-rules';
 import { RouteType } from '../models/enums';
@@ -23,6 +23,11 @@ export class TransitService {
   private achievementsSubject = new BehaviorSubject<Achievement[]>([]);
   private userStatsSubject = new BehaviorSubject<UserStats>(this.getEmptyUserStats());
   private persistedUnlocks = new Map<string, Date>();
+  private readonly pageSize = 25;
+  private offset = 0;
+  private hasMoreRoutes = true;
+  private isLoadingRoutes = false;
+  private isLoadingAllRoutes = false;
 
   transitLines$ = this.transitLinesSubject.asObservable();
   achievements$ = this.achievementsSubject.asObservable();
@@ -38,34 +43,72 @@ export class TransitService {
   private loadInitialData() {
     this.loadUnlockedAchievements();
 
-    const source$ = this.authService.getToken()
-      ? this.getTransitLinesWithProgress()
-      : this.getTransitLines();
+    this.resetRoutes();
+    this.loadNextPage();
+  }
 
-    source$.subscribe(lines => {
-      this.transitLinesSubject.next(lines);
-      this.updateUserStats();
+  private fetchTransitLines(offset: number, limit: number): Observable<TransitLine[]> {
+    const endpoint = this.authService.getToken() ? 'with-progress' : '';
+    const url = endpoint ? `${this.baseUrl}/api/routes/${endpoint}` : `${this.baseUrl}/api/routes`;
+    const params = new HttpParams()
+      .set('offset', offset)
+      .set('limit', limit);
+
+    return this.http.get<TransitLine[]>(url, { params }).pipe(
+      map(lines => lines.map(line => ({
+        ...line,
+        completed: line.completed ?? false,
+        completedDate: line.completedDate ? new Date(line.completedDate) : undefined
+      })))
+    );
+  }
+
+  loadNextPage(): void {
+    if (!this.hasMoreRoutes || this.isLoadingRoutes) {
+      return;
+    }
+
+    this.isLoadingRoutes = true;
+    this.fetchTransitLines(this.offset, this.pageSize).subscribe({
+      next: lines => {
+        this.applyLoadedRoutes(lines, this.offset > 0);
+        this.offset += lines.length;
+        if (lines.length < this.pageSize) {
+          this.hasMoreRoutes = false;
+        }
+      },
+      error: () => {
+        this.isLoadingRoutes = false;
+      },
+      complete: () => {
+        this.isLoadingRoutes = false;
+      }
     });
   }
 
-  getTransitLines(): Observable<TransitLine[]> {
-    return this.http.get<TransitLine[]>(`${this.baseUrl}/api/routes`).pipe(
-      map(lines => lines.map(line => ({
-        ...line,
-        completed: line.completed ?? false,
-        completedDate: line.completedDate ? new Date(line.completedDate) : undefined
-      })))
-    );
-  }
+  ensureAllRoutesLoaded(): void {
+    if (!this.hasMoreRoutes || this.isLoadingAllRoutes) {
+      return;
+    }
 
-  getTransitLinesWithProgress(): Observable<TransitLine[]> {
-    return this.http.get<TransitLine[]>(`${this.baseUrl}/api/routes/with-progress`).pipe(
-      map(lines => lines.map(line => ({
-        ...line,
-        completed: line.completed ?? false,
-        completedDate: line.completedDate ? new Date(line.completedDate) : undefined
-      })))
-    );
+    this.isLoadingAllRoutes = true;
+    const loadRemaining = async () => {
+      try {
+        while (this.hasMoreRoutes) {
+          const lines = await firstValueFrom(this.fetchTransitLines(this.offset, this.pageSize));
+          const normalized = lines ?? [];
+          this.applyLoadedRoutes(normalized, this.offset > 0);
+          this.offset += normalized.length;
+          if (normalized.length < this.pageSize) {
+            this.hasMoreRoutes = false;
+          }
+        }
+      } finally {
+        this.isLoadingAllRoutes = false;
+      }
+    };
+
+    void loadRemaining();
   }
 
   getFilteredTransitLines(filters: FilterOptions): Observable<TransitLine[]> {
@@ -162,6 +205,26 @@ export class TransitService {
     this.achievementsSubject.next(achievements);
     this.userStatsSubject.next(stats);
     this.persistUnlockedAchievements(achievements);
+  }
+
+  private resetRoutes(): void {
+    this.transitLinesSubject.next([]);
+    this.offset = 0;
+    this.hasMoreRoutes = true;
+    this.isLoadingRoutes = false;
+    this.isLoadingAllRoutes = false;
+  }
+
+  private applyLoadedRoutes(lines: TransitLine[], append: boolean): void {
+    const existing = this.transitLinesSubject.value;
+    const merged = append ? [...existing, ...lines] : [...lines];
+    const byId = new Map<number, TransitLine>();
+    merged.forEach(line => {
+      byId.set(line.id, line);
+    });
+    const next = Array.from(byId.values());
+    this.transitLinesSubject.next(next);
+    this.updateUserStats();
   }
 
   private computeAchievements(lines: TransitLine[]): Achievement[] {

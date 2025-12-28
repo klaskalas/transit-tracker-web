@@ -94,6 +94,9 @@ export class MapComponent implements OnInit, OnDestroy {
     };
 
     const searchTerm = this.searchTerm.trim().toLowerCase();
+    if (this.hasActiveFilters(searchTerm)) {
+      this.transitService.ensureAllRoutesLoaded();
+    }
 
     this.transitLines$ = this.transitService.getFilteredTransitLines(this.currentFilters).pipe(
       map(lines => lines.filter(line => {
@@ -142,6 +145,23 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
+  onLinesScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target) {
+      return;
+    }
+    const threshold = 120;
+    const isNearBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - threshold;
+    if (!isNearBottom) {
+      return;
+    }
+    if (this.hasActiveFilters(this.searchTerm.trim().toLowerCase())) {
+      this.transitService.ensureAllRoutesLoaded();
+    } else {
+      this.transitService.loadNextPage();
+    }
+  }
+
   private getQuickTypeFilters(): RouteType[] {
     switch (this.selectedType) {
       case 'metro':
@@ -171,6 +191,13 @@ export class MapComponent implements OnInit, OnDestroy {
       .toLowerCase();
 
     return haystack.includes(searchTerm);
+  }
+
+  private hasActiveFilters(searchTerm: string): boolean {
+    return !!searchTerm ||
+      this.currentFilters.types.length > 0 ||
+      this.currentFilters.regions.length > 0 ||
+      this.currentFilters.completionStatus !== 'all';
   }
 
   // City/region filtering is handled in the filter dialog.

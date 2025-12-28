@@ -74,4 +74,13 @@ export class LineDetailComponent implements OnInit, OnDestroy {
     }
     return 'Transit';
   }
+
+  getDistanceKm(line: TransitLine): string {
+    const meters = line.longestTripLengthMeters;
+    if (typeof meters === 'number' && meters > 0) {
+      return (meters / 1000).toFixed(1);
+    }
+    const points = line.points ?? 0;
+    return (Math.max(5, points / 3)).toFixed(1);
+  }
 }

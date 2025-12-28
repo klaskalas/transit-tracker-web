@@ -56,7 +56,8 @@
         } @else {
           <div
             class="lines-list"
-            [ngClass]="{ 'list-mode': true }">
+            [ngClass]="{ 'list-mode': true }"
+            (scroll)="onLinesScroll($event)">
             @for(line of lines; track line.id) {
               <app-transit-line-card
                 [line]="line"
@@ -94,7 +95,7 @@
           <p>Try adjusting your filters or search terms.</p>
         </div>
       } @else {
-        <div class="lines-list list-mode">
+        <div class="lines-list list-mode" (scroll)="onLinesScroll($event)">
           @for(line of lines; track line.id) {
             <app-transit-line-card
               [line]="line"
