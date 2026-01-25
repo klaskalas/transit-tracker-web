@@ -6,6 +6,16 @@
   position: relative;
 }
 
+@media (max-width: 640px) {
+  // .app-container {
+  //   height: auto;
+  // }
+
+  :host-context(.map-mode) .app-container {
+    min-height: 100vh;
+  }
+}
+
 .content-area {
   flex: 1;
   overflow-y: auto;
@@ -17,3 +27,6 @@
   overflow: hidden;
 }
 
+:host-context(.no-nav) .content-area {
+  padding-bottom: 0;
+}

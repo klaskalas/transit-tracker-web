@@ -41,9 +41,9 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedLine: TransitLine | null = null;
   typeOptions = [
     { label: 'Metro', value: 'metro' },
-    { label: 'Bus', value: 'bus' },
     { label: 'Tram', value: 'tram' },
     { label: 'Train', value: 'train' },
+    { label: 'Monorail', value: 'monorail' },
   ];
 
   constructor(
@@ -75,6 +75,10 @@ export class MapComponent implements OnInit, OnDestroy {
       width: '420px',
       data: { filters: { ...this.currentFilters } }
     });
+
+    if (!dialogRef) {
+      return;
+    }
 
     dialogRef.onClose.subscribe(result => {
       if (result) {
@@ -129,6 +133,7 @@ export class MapComponent implements OnInit, OnDestroy {
     if (mode === 'explore') {
       this.selectedLine = null;
       this.routeService.clearSelectedRoute();
+      return;
     }
   }
 
@@ -166,12 +171,12 @@ export class MapComponent implements OnInit, OnDestroy {
     switch (this.selectedType) {
       case 'metro':
         return [RouteType.Metro, RouteType.Underground, RouteType.UrbanRailway];
-      case 'bus':
-        return [RouteType.BusService, RouteType.LocalBus, RouteType.ExpressBus, RouteType.RegionalBus];
       case 'tram':
         return [RouteType.TramService, RouteType.CityTram, RouteType.LocalTram, RouteType.RegionalTram];
       case 'train':
         return [RouteType.RailwayService, RouteType.RegionalRail, RouteType.SuburbanRailway, RouteType.InterRegionalRail];
+      case 'monorail':
+        return [RouteType.Monorail];
       default:
         return [];
     }

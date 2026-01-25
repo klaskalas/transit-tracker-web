@@ -37,8 +37,13 @@ export class SearchFilterPanelComponent {
     metro: faTrainSubway,
     bus: faBusSimple,
     tram: faTrainTram,
-    train: faTrain
+    train: faTrain,
+    monorail: faTrain
   };
+
+  getTypeIcon(type: string): IconDefinition {
+    return this.typeIcons[type] ?? faTrain;
+  }
 
   onSearchTermChange(value: string): void {
     this.searchTerm = value;

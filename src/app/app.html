@@ -4,5 +4,7 @@
     <router-outlet></router-outlet>
   </div>
 
-  <app-bottom-nav></app-bottom-nav>
+  @if (authUserSignal()) {
+    <app-bottom-nav></app-bottom-nav>
+  }
 </div>

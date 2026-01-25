@@ -1,5 +1,5 @@
-import {Component, inject} from '@angular/core';
-import {DialogService, DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {Component} from '@angular/core';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {FilterOptions} from '../../models/transit.model';
 import {Checkbox} from 'primeng/checkbox';
 import {FormsModule} from '@angular/forms';
@@ -15,8 +15,7 @@ import {RouteType} from '../../models/enums';
     CommonModule,
     Checkbox,
     FormsModule
-  ],
-  providers: [DialogService]
+  ]
 })
 export class FilterDialogComponent {
   filters: FilterOptions;
@@ -25,7 +24,7 @@ export class FilterDialogComponent {
     { value: RouteType.RailwayService, label: 'Train' },
     { value: RouteType.TramService, label: 'Tram' },
     { value: RouteType.UrbanRailwayService, label: 'Metro' },
-    { value: RouteType.BusService, label: 'Bus' }
+    { value: RouteType.Monorail, label: 'Monorail' }
   ];
 
   regions: string[] = ['Stockholm', 'Tokyo', 'London', 'New York', 'Paris'];
@@ -36,10 +35,10 @@ export class FilterDialogComponent {
     { value: 'incomplete', label: 'Incomplete Only' }
   ];
 
-  config = inject(DynamicDialogConfig);
-  dialogRef = inject(DynamicDialogRef);
-
-  constructor() {
+  constructor(
+    private config: DynamicDialogConfig,
+    private dialogRef: DynamicDialogRef
+  ) {
     const incoming = this.config.data?.filters as FilterOptions | undefined;
     this.filters = {
       types: incoming?.types ?? [],

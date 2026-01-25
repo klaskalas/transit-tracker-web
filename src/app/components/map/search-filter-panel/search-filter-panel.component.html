@@ -25,7 +25,7 @@
         class="filter-chip"
         [class.active]="selectedType === option.value"
         (click)="onSelectedTypeChange(selectedType === option.value ? 'all' : option.value)">
-        <fa-icon [icon]="typeIcons[option.value]"></fa-icon>
+        <fa-icon [icon]="getTypeIcon(option.value)"></fa-icon>
         <span>{{ option.label }}</span>
       </button>
     }

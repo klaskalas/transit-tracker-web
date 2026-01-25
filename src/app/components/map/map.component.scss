@@ -1,6 +1,12 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 .map-container {
   height: 100%;
   width: 100%;
+  min-height: 100vh;
   background: #f8fafc;
   font-family: "Outfit", "Segoe UI", sans-serif;
 }

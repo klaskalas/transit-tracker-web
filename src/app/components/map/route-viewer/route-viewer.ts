@@ -1,4 +1,4 @@
-import {Component, effect, inject, Input, OnInit} from '@angular/core';
+import {Component, effect, ElementRef, inject, Input, OnDestroy, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouteService } from '../../../services/route-service';
 import {GeoJSONSourceComponent, LayerComponent, MapComponent} from 'ngx-mapbox-gl';
@@ -12,13 +12,15 @@ import {FeatureCollection} from 'geojson';
   templateUrl: './route-viewer.html',
   styleUrls: ['./route-viewer.scss'],
 })
-export class RouteViewerComponent implements OnInit {
+export class RouteViewerComponent implements OnInit, OnDestroy {
   private routeService = inject(RouteService);
+  private hostRef = inject(ElementRef);
 
   geoJson: FeatureCollection;
   readonly routeId = this.routeService.selectedRouteId;
   map: mapboxgl.Map;
   @Input() interactive = true;
+  private resizeObserver?: ResizeObserver;
 
   constructor() {
     effect(() => {
@@ -40,6 +42,7 @@ export class RouteViewerComponent implements OnInit {
 
   onMapCreate(map: mapboxgl.Map) {
     this.map = map;
+    this.startResizeObserver();
     if (!this.interactive) {
       map.scrollZoom.disable();
       map.boxZoom.disable();
@@ -84,5 +87,19 @@ export class RouteViewerComponent implements OnInit {
       this.geoJson = geoJson;
       this.fitMapToLineStringCoordinates(geoJson);
     });
+  }
+
+  private startResizeObserver(): void {
+    if (this.resizeObserver || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+    this.resizeObserver = new ResizeObserver(() => {
+      this.map?.resize();
+    });
+    this.resizeObserver.observe(this.hostRef.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
   }
 }
